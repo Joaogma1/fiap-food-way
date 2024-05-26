@@ -9,6 +9,7 @@ public static class ApplicationServicesConfig
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IProductService, ProductService>();
         return services;
     }
 }
