@@ -1,8 +1,7 @@
 namespace Foodway.Domain.ViewModels.Role;
 
-public class RoleViewModel
+public class CategoryViewModel
 {
     public string Name { get; set; }
-
-    public string Description { get; set; }
+    public int Id { get; set; }
 }

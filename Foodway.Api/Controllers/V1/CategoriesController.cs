@@ -22,7 +22,13 @@ namespace Foodway.Api.Controllers.V1
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request)
         {
-            return CreateResponse(await _categoryService.CreateAsync(request));
+            return CreatedResponse(await _categoryService.CreateAsync(request));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            return CreateResponse(await _categoryService.GetAllAsync());
         }
     }
 }

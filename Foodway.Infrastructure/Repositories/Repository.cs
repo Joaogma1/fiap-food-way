@@ -158,6 +158,16 @@ public class Repository<T> : IRepository<T> where T : BaseAuditableEntity
         return List(where, page, pageSize, sortType, includes).AsNoTracking();
     }
 
+    public async Task<IQueryable<T>> ListAsync(Expression<Func<T, bool>>? where = null, int? page = null, int? pageSize = null, string? sortType = null, IEnumerable<string>? includes = null)
+    {
+        return await Task.FromResult(CurrentSet(where, page, pageSize, sortType, includes));
+    }
+
+    public async Task<IQueryable<T>> ListAsNoTrackingAsync(Expression<Func<T, bool>>? where = null, int? page = null, int? pageSize = null, string? sortType = null, IEnumerable<string>? includes = null)
+    {
+        return await Task.FromResult(List(where, page, pageSize, sortType, includes).AsNoTracking());
+    }
+
     public IQueryable<T> List(Expression<Func<T, bool>>? where = null, int? page = null, int? pageSize = null,
         string? sortType = null, params Expression<Func<T, object>>[] includes)
     {
@@ -299,4 +309,5 @@ public class Repository<T> : IRepository<T> where T : BaseAuditableEntity
         await Context.AddAsync(entity);
         await Context.SaveChangesAsync();
     }
+
 }

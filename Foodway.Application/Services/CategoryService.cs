@@ -2,7 +2,9 @@
 using Foodway.Application.Contracts.Services;
 using Foodway.Domain.Contracts.Repositories;
 using Foodway.Domain.Entities;
+using Foodway.Domain.Projections;
 using Foodway.Domain.Requests.Category;
+using Foodway.Domain.ViewModels.Role;
 using Foodway.Shared.Notifications;
 
 namespace Foodway.Application.Services
@@ -40,6 +42,9 @@ namespace Foodway.Application.Services
         return createdCategory.Id.ToString();
         }
 
-
+        public async Task<IEnumerable<CategoryViewModel>> GetAllAsync()
+        {
+            return await Task.FromResult((_categoryRepository.ListAsNoTracking().ToViewModel()));
+        }
     }
 }

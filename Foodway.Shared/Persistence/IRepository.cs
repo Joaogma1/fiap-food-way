@@ -50,6 +50,19 @@ public interface IRepository<T> where T : class
         string? sortType = null,
         IEnumerable<string>? includes = null);
 
+    Task<IQueryable<T>> ListAsync(Expression<Func<T, bool>>? where = null,
+    int? page = null,
+    int? pageSize = null,
+    string? sortType = null,
+    IEnumerable<string>? includes = null);
+
+    Task<IQueryable<T>> ListAsNoTrackingAsync(Expression<Func<T, bool>>? where = null,
+        int? page = null,
+        int? pageSize = null,
+        string? sortType = null,
+        IEnumerable<string>? includes = null);
+
+
     IQueryable<T> List(Expression<Func<T, bool>>? where = null,
         int? page = null,
         int? pageSize = null,
