@@ -1,0 +1,8 @@
+.idea
+.vs
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.*/
+.DS_Store
