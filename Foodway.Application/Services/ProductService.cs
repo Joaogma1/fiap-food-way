@@ -2,18 +2,13 @@
 using Foodway.Application.Contracts.Services;
 using Foodway.Domain.Contracts.Repositories;
 using Foodway.Domain.Entities;
+using Foodway.Domain.Projections;
 using Foodway.Domain.QueryFilters;
-using Foodway.Domain.Requests.Category;
 using Foodway.Domain.Requests.Product;
 using Foodway.Domain.ViewModels.Product;
-using Foodway.Infrastructure.Repositories;
+using Foodway.Shared.Helpers;
 using Foodway.Shared.Notifications;
 using Foodway.Shared.Pagination;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Foodway.Application.Services
 {
@@ -41,11 +36,13 @@ namespace Foodway.Application.Services
                 HandleValidationErrors(reqValidation);
                 return "";
             }
+
             if (!(await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId)))
             {
                 this.Notifications.Handle("Category", $"{req.CategoryId} does not exists");
                 return "";
             }
+
             var createdProduct = await _productRepository.AddAsync(new Product
             { 
                 CategoryId = req.CategoryId,
@@ -60,9 +57,42 @@ namespace Foodway.Application.Services
             return createdProduct.Id.ToString();
         }
 
-        public Task<PagedList<ProductViewModel>> getPagedAsync(ProductFilter filter)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            if (!(await _productRepository.AnyAsync(x => x.Id == id)))
+            {
+                this.Notifications.Handle("Product", $"{id} does not exists");
+                return false;
+            }
+
+            var product = await _productRepository.FindAsync(x => x.Id == id);
+
+            product!.IsDeleted = true;
+
+            await _productRepository.SaveChanges();
+
+
+            return true;
+        }
+
+        public async Task<ProductViewModel?> GetByIdAsync(Guid id)
+        {
+            if (!(await _productRepository.AnyAsync(x => x.Id ==id)))
+            {
+                return null;
+            }
+            var joins = new IncludeHelper<Product>().Include(x => x.Category).Includes;
+
+            return (await _productRepository.FindAsyncAsNoTracking(x => x.Id == id, joins)).ToViewModel();
+        }
+
+        public async Task<PagedList<ProductViewModel>> getPagedAsync(ProductFilter filter)
+        {
+            var where = _productRepository.Where(filter);
+
+            var data = _productRepository.PagedListAsNoTracking(where, filter, x => x.Category);
+
+            return new PagedList<ProductViewModel>(data.Items.ToViewModel(), data.TotalPages,data.PageSize);
         }
 
         public async Task<string> UpdateAsync(UpdateProductRequest req)

@@ -1,4 +1,5 @@
 ﻿using Foodway.Application.Contracts.Services;
+using Foodway.Domain.QueryFilters;
 using Foodway.Domain.Requests.Product;
 using Foodway.Shared.Notifications;
 using Microsoft.AspNetCore.Authorization;
@@ -21,15 +22,18 @@ namespace Foodway.Api.Controllers.V1
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery] ProductFilter filter)
         {
-            return CreatedResponse();
+            return CreateResponse(await _productService.getPagedAsync(filter));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            return CreatedResponse();
+            var result = await _productService.GetByIdAsync(id);
+            if (result is null) return NotFoundResponse();
+
+            return CreateResponse(result);
         }
 
         [HttpPost]
@@ -54,7 +58,10 @@ namespace Foodway.Api.Controllers.V1
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            return CreatedResponse();
+            var result = await _productService.DeleteAsync(id);
+            if (result is false) return NotFoundResponse();
+
+            return NoContent();
         }
 
     }

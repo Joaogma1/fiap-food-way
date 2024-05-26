@@ -18,5 +18,7 @@ namespace Foodway.Application.Contracts.Services
         Task<string> UpdateAsync(UpdateProductRequest req);
 
         Task<PagedList<ProductViewModel>> getPagedAsync(ProductFilter filter);
+        Task<bool> DeleteAsync(Guid id);
+        Task<ProductViewModel?> GetByIdAsync(Guid id);
     }
 }

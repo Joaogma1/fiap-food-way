@@ -25,6 +25,8 @@ public static class MapExtensions
         builder.MapVarchar(t => t.LastModifiedBy, 255, false);
 
         builder.MapBit(t => t.IsDeleted,defaultValue: false);
+
+        builder.HasQueryFilter(t => !t.IsDeleted);
     }
     public static PropertyBuilder<int> MapIdentifier<T>(this EntityTypeBuilder<T> builder,
      Expression<Func<T, int>> exp,

@@ -68,7 +68,7 @@ namespace Foodway.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_category");
 
-                    b.ToTable("category");
+                    b.ToTable("category", (string)null);
                 });
 
             modelBuilder.Entity("Foodway.Domain.Entities.Product", b =>
@@ -130,7 +130,7 @@ namespace Foodway.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("product");
+                    b.ToTable("product", (string)null);
                 });
 
             modelBuilder.Entity("Foodway.Domain.Entities.Product", b =>
