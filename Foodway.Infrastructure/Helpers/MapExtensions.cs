@@ -74,6 +74,18 @@ public static class MapExtensions
         return isRequired ? b.IsRequired() : b;
     }
 
+    public static PropertyBuilder<string> MapText<T>(this EntityTypeBuilder<T> builder,
+    Expression<Func<T, string>> exp,
+    bool isRequired,
+    string? columnName = null)
+    where T : class
+    {
+        var b = builder.Property(exp)
+            .HasColumnName(columnName ?? exp.Name)
+            .HasColumnType($"text");
+        return isRequired ? b.IsRequired() : b;
+    }
+
     public static PropertyBuilder<bool> MapBit<T>(this EntityTypeBuilder<T> builder,
         Expression<Func<T, bool>> exp,
         string? columnName = null, bool defaultValue = false)
@@ -107,6 +119,18 @@ public static class MapExtensions
             .HasColumnName(columnName ?? exp.Name)
             .HasColumnType($"varchar({size})")
             .HasConversion<string>();
+        return isRequired ? b.IsRequired() : b;
+    }
+
+    public static PropertyBuilder<decimal> MapMoney<T>(this EntityTypeBuilder<T> builder,
+    Expression<Func<T, decimal>> exp,
+    bool isRequired,
+    string? columnName = null)
+    where T : class
+    {
+        var b = builder.Property(exp)
+            .HasColumnName(columnName ?? exp.Name)
+            .HasColumnType($"decimal(18,2)");
         return isRequired ? b.IsRequired() : b;
     }
 }
