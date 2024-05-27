@@ -14,6 +14,6 @@ public class ClientsMap : IEntityTypeConfiguration<Clients>
         builder.MapVarchar(r => r.Name, 255, false);
         builder.MapVarchar(r => r.Email, 255, false);
         builder.MapVarchar(r => r.CPF, 11, false);
-        builder.MapIdentifier(c => c.Id);
+        builder.MapUniqueIdentifier(x => x.Id);
     }
 }

@@ -28,7 +28,7 @@ namespace Foodway.Api.Controllers.V1
         [HttpGet("{cpf}")]
         public async Task<IActionResult> GetClientByCPF(string cpf)
         {
-            var result = await _clientsService.GetByCPFAsync(id);
+            var result = await _clientsService.GetByCPFAsync(cpf);
             if (result is null) return NotFoundResponse();
 
             return CreateResponse(result);

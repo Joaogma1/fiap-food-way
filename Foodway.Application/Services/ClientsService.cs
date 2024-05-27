@@ -17,13 +17,13 @@ namespace Foodway.Application.Services
         private readonly IClientsRepository _clientsRepository;
         private readonly IValidator<CreateClientRequest> _createClientValidator;
 
-        public ClientsService(IDomainNotification notifications, IClientsRepository clientsRepository, IValidator<CreateProductRequest> createProductValidator) : base(notifications)
+        public ClientsService(IDomainNotification notifications, IClientsRepository clientsRepository, IValidator<CreateClientRequest> createClientValidator) : base(notifications)
         {
             _clientsRepository = clientsRepository;
-            _createClientValidator = createProductValidator;
+            _createClientValidator = createClientValidator;
         }
 
-        public async Task<string> CreateAsync(CreateProductRequest req)
+        public async Task<string> CreateAsync(CreateClientRequest req)
         {
             var reqValidation = await _createClientValidator.ValidateAsync(req);
 
@@ -33,7 +33,7 @@ namespace Foodway.Application.Services
                 return "";
             }
 
-            if (await _categoryRepository.AnyAsync(x => x.CPF == req.CPF))
+            if (await _clientsRepository.AnyAsync(x => x.CPF == req.CPF))
             {
                 this.Notifications.Handle("Client", $"{req.CPF} does already exists");
                 return "";
@@ -52,15 +52,13 @@ namespace Foodway.Application.Services
             return createdClient.Id.ToString();
         }
 
-        public async Task<ProductViewModel?> GetByCPFAsync(string cpf)
+        public async Task<ClientsViewModel?> GetByCPFAsync(string cpf)
         {
             if (!(await _clientsRepository.AnyAsync(x => x.CPF == cpf)))
             {
                 return null;
             }
-            var joins = new IncludeHelper<Clients>().Include(x => x.Category).Includes;
-
-            return (await _clientsRepository.FindAsyncAsNoTracking(x => x.CPF == cpf, joins)).ToViewModel();
+            return (await _clientsRepository.FindAsyncAsNoTracking(x => x.CPF == cpf)).ToViewModel();
         }
     }
 
