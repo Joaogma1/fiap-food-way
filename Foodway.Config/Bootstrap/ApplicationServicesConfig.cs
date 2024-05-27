@@ -10,6 +10,7 @@ public static class ApplicationServicesConfig
     {
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IClientsService, ClientsService>();
         return services;
     }
 }
