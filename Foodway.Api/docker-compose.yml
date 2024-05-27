@@ -1,7 +1,4 @@
-version: '3.1'
-
 services:
-
   db:
     image: postgres
     environment:
@@ -9,3 +6,21 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "User ID=postgres;Password=docker;Host=db;Port=5432;Database=foodway;Pooling=false;"
+      JWT__ValidAudience: "https://localhost:7120"
+      JWT__ValidIssuer: "http://localhost:5124"
+      JWT__Secret: "JWTAuthenticationHIGHsecuredPassword@StrongPass132r"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
