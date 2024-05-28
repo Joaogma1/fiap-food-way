@@ -39,7 +39,7 @@ namespace Foodway.Application.Services
                 return "";
             }
 
-            var createdClient = await _clientsRepository.AddAsync(new Clients
+            var createdClient = await _clientsRepository.AddAsync(new Client
             { 
                 Name = req.Name,
                 CPF = req.CPF,

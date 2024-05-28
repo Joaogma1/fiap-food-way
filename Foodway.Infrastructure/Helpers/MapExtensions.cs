@@ -40,16 +40,33 @@ public static class MapExtensions
             .IsRequired();
     }
 
+    public static PropertyBuilder<int> MapNumber<T>(this EntityTypeBuilder<T> builder,
+                 Expression<Func<T, int>> exp,
+                 bool required = false,
+                 string? columnName = null)
+                 where T : class
+    {
+        var b = builder.Property(exp)
+            .HasColumnName(columnName ?? exp.Name?.ToLower())
+            .HasColumnType("integer");
+
+         return required ?  b.IsRequired() : b;
+    }
+
     public static PropertyBuilder<Guid> MapUniqueIdentifier<T>(this EntityTypeBuilder<T> builder,
         Expression<Func<T, Guid>> exp,
+        bool isPrimaryKey = true,
         string? columnName = null)
         where T : class
     {
-        return builder.Property(exp)
-            .HasColumnName(columnName ?? exp.Name?.ToLower())
-            .HasColumnType("uuid")
-            .ValueGeneratedOnAdd()
-            .IsRequired();
+         var b = builder.Property(exp)
+             .HasColumnName(columnName ?? exp.Name?.ToLower())
+             .HasColumnType("uuid");
+            
+         return isPrimaryKey
+             ? b.ValueGeneratedOnAdd()
+                 .IsRequired()
+             : b;
     }
 
     public static PropertyBuilder<Guid?> MapUniqueIdentifier<T>(this EntityTypeBuilder<T> builder,

@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Linq.Expressions;
+using FluentValidation;
 using Foodway.Application.Contracts.Services;
 using Foodway.Domain.Contracts.Repositories;
 using Foodway.Domain.Entities;
@@ -43,16 +44,23 @@ namespace Foodway.Application.Services
                 return "";
             }
 
-            var createdProduct = await _productRepository.AddAsync(new Product
-            { 
+            var product = new Product()
+            {
                 CategoryId = req.CategoryId,
                 Name = req.Name,
                 Description = req.Description,
                 Price = req.Price,
                 CreatedBy = "BackOffice",
                 LastModifiedBy = "BackOffice",
+            };
+            product.Stock = new ProductStock
+            {
+                Product = product,
+                QuantityInStock = req.Stock,
+                ProductId = default
+            };
 
-            });
+            var createdProduct = await _productRepository.AddAsync(product);
             await _productRepository.SaveChanges();
             return createdProduct.Id.ToString();
         }
@@ -71,7 +79,6 @@ namespace Foodway.Application.Services
 
             await _productRepository.SaveChanges();
 
-
             return true;
         }
 
@@ -81,7 +88,7 @@ namespace Foodway.Application.Services
             {
                 return null;
             }
-            var joins = new IncludeHelper<Product>().Include(x => x.Category).Includes;
+            var joins = new IncludeHelper<Product>().Include(x => x.Category).Include(x=>x.Stock).Includes;
 
             return (await _productRepository.FindAsyncAsNoTracking(x => x.Id == id, joins)).ToViewModel();
         }
@@ -89,8 +96,8 @@ namespace Foodway.Application.Services
         public async Task<PagedList<ProductViewModel>> getPagedAsync(ProductFilter filter)
         {
             var where = _productRepository.Where(filter);
-
-            var data = _productRepository.PagedListAsNoTracking(where, filter, x => x.Category);
+            
+            var data = _productRepository.PagedListAsNoTracking(where, filter,x => x.Category,x=>x.Stock);
 
             return new PagedList<ProductViewModel>(data.Items.ToViewModel(), data.TotalPages,data.PageSize);
         }
@@ -109,8 +116,10 @@ namespace Foodway.Application.Services
                 this.Notifications.Handle("Category", $"{req.CategoryId} does not exists");
                 return "";
             }
+            
+            var joins = new IncludeHelper<Product>().Include(x => x.Category).Include(x=>x.Stock).Includes;
 
-            var product = await _productRepository.FindAsync(x => x.Id == req.Id);
+            var product = await _productRepository.FindAsync(x => x.Id == req.Id,joins);
             if (product == null)
             {
                 var createdProduct = await _productRepository.AddAsync(new Product
@@ -121,7 +130,12 @@ namespace Foodway.Application.Services
                     Price = req.Price,
                     CreatedBy = "BackOffice",
                     LastModifiedBy = "BackOffice",
-
+                    Stock = new ProductStock()
+                    {
+                        QuantityInStock = req.Stock,
+                        Product = default,
+                        ProductId = default
+                    }
                 });
                 await _productRepository.SaveChanges();
                 return createdProduct.Id.ToString();
@@ -137,6 +151,7 @@ namespace Foodway.Application.Services
             product.Description = req.Description;
             product.Price = req.Price;
             product.CategoryId = req.CategoryId;
+            product.Stock.QuantityInStock = req.Stock;
         }
     }
 

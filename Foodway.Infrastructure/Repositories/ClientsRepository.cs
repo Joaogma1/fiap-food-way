@@ -4,7 +4,7 @@ using Foodway.Infrastructure.Contexts;
 
 namespace Foodway.Infrastructure.Repositories
 {
-    public class ClientsRepository : Repository<Clients>, IClientsRepository
+    public class ClientsRepository : Repository<Client>, IClientsRepository
     {
         public ClientsRepository(AppDbContext context) : base(context)
         {

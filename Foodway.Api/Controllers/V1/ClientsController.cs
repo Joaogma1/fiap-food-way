@@ -1,5 +1,4 @@
 using Foodway.Application.Contracts.Services;
-using Foodway.Domain.Requests.Auth;
 using Foodway.Domain.Requests.Clients;
 using Foodway.Shared.Notifications;
 using Microsoft.AspNetCore.Authorization;
