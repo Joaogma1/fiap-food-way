@@ -12,10 +12,11 @@ services:
   web:
     build: .
     ports:
-      - "80:80"
+      - "8080:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "User ID=postgres;Password=docker;Host=db;Port=5432;Database=foodway;Pooling=false;"
+      ASPNETCORE_HTTP_PORTS: "8080"
       JWT__ValidAudience: "https://localhost:7120"
       JWT__ValidIssuer: "http://localhost:5124"
       JWT__Secret: "JWTAuthenticationHIGHsecuredPassword@StrongPass132r"

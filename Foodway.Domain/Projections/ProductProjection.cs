@@ -16,7 +16,12 @@ namespace Foodway.Domain.Projections
             Id = product.Id,
             Description = product.Description,
             Name = product.Name,
-            Price = product.Price
+            Price = product.Price,
+            Stock = new ProductStockViewModel()
+            {
+                Quantity = product.Stock.QuantityInStock,
+                IsAvailable = product.Stock.IsAvailable
+            }
         });
 
         public static IEnumerable<ProductViewModel> ToViewModel(this IEnumerable<Product> query) => query.Select(product => new ProductViewModel
@@ -25,7 +30,12 @@ namespace Foodway.Domain.Projections
             Id = product.Id,
             Description = product.Description,
             Name = product.Name,
-            Price = product.Price
+            Price = product.Price,
+            Stock = new ProductStockViewModel()
+            {
+                Quantity = product.Stock.QuantityInStock,
+                IsAvailable = product.Stock.IsAvailable
+            }
         });
 
         public static ProductViewModel ToViewModel(this Product product) => new ProductViewModel
@@ -34,7 +44,12 @@ namespace Foodway.Domain.Projections
             Id = product.Id,
             Description = product.Description,
             Name = product.Name,
-            Price = product.Price
+            Price = product.Price,
+            Stock = new ProductStockViewModel()
+            {
+                Quantity = product.Stock.QuantityInStock,
+                IsAvailable = product.Stock.IsAvailable
+            }
         };
     }
 }

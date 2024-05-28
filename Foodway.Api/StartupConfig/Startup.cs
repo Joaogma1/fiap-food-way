@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Foodway.Config.Bootstrap;
 using Foodway.Config.Handlers;
 
@@ -31,7 +32,11 @@ public class Startup : IAppStartup
                     .AllowAnyHeader());
         });
 
-        services.AddControllers();
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+
         services.AddApiDocsConfiguration();
         services.AddHttpsRedirectionConfiguration(environment);
         services.AddIoCServices();

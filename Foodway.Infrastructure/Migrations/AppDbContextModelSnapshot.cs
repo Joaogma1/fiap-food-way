@@ -71,7 +71,7 @@ namespace Foodway.Infrastructure.Migrations
                     b.ToTable("category");
                 });
 
-            modelBuilder.Entity("Foodway.Domain.Entities.Clients", b =>
+            modelBuilder.Entity("Foodway.Domain.Entities.Client", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -123,9 +123,97 @@ namespace Foodway.Infrastructure.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_clients");
+                        .HasName("pk_client");
 
-                    b.ToTable("clients");
+                    b.ToTable("client");
+                });
+
+            modelBuilder.Entity("Foodway.Domain.Entities.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("ClientId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("client_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("created_by");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime?>("LastModifiedAt")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("last_modified_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("LastModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<string>("OrderCode")
+                        .HasColumnType("varchar(20)")
+                        .HasColumnName("order_code");
+
+                    b.Property<string>("OrderStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(20)")
+                        .HasDefaultValue("WaitingApproval")
+                        .HasColumnName("order_status");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(20)")
+                        .HasDefaultValue("WaitingProvider")
+                        .HasColumnName("payment_status");
+
+                    b.HasKey("Id")
+                        .HasName("pk_order");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("order");
+                });
+
+            modelBuilder.Entity("Foodway.Domain.Entities.OrderItems", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.HasKey("OrderId", "ProductId")
+                        .HasName("pk_order_items");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("order_items");
                 });
 
             modelBuilder.Entity("Foodway.Domain.Entities.Product", b =>
@@ -190,6 +278,61 @@ namespace Foodway.Infrastructure.Migrations
                     b.ToTable("product");
                 });
 
+            modelBuilder.Entity("Foodway.Domain.Entities.ProductStock", b =>
+                {
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("QuantityInStock")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity_in_stock");
+
+                    b.HasKey("ProductId", "Id")
+                        .HasName("pk_product_stock");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("product_stock");
+                });
+
+            modelBuilder.Entity("Foodway.Domain.Entities.Order", b =>
+                {
+                    b.HasOne("Foodway.Domain.Entities.Client", "Client")
+                        .WithMany("Orders")
+                        .HasForeignKey("ClientId")
+                        .HasConstraintName("fk_order_client_client_id");
+
+                    b.Navigation("Client");
+                });
+
+            modelBuilder.Entity("Foodway.Domain.Entities.OrderItems", b =>
+                {
+                    b.HasOne("Foodway.Domain.Entities.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_items_order_order_id");
+
+                    b.HasOne("Foodway.Domain.Entities.Product", "Product")
+                        .WithMany("ProductOrders")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_order_items_product_product_id");
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Foodway.Domain.Entities.Product", b =>
                 {
                     b.HasOne("Foodway.Domain.Entities.Category", "Category")
@@ -202,9 +345,39 @@ namespace Foodway.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Foodway.Domain.Entities.ProductStock", b =>
+                {
+                    b.HasOne("Foodway.Domain.Entities.Product", "Product")
+                        .WithOne("Stock")
+                        .HasForeignKey("Foodway.Domain.Entities.ProductStock", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_product_stock_product_product_id");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Foodway.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Foodway.Domain.Entities.Client", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("Foodway.Domain.Entities.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("Foodway.Domain.Entities.Product", b =>
+                {
+                    b.Navigation("ProductOrders");
+
+                    b.Navigation("Stock")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

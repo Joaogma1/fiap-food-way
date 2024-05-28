@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Foodway.Domain.Entities
+﻿namespace Foodway.Domain.Entities
 {
     public class Product : BaseAuditableEntity
     {
@@ -14,7 +8,7 @@ namespace Foodway.Domain.Entities
         public decimal Price { get; set; }
         public Category Category { get; set; }
         public int CategoryId { get; set; }
-
-
+        public ProductStock Stock { get; set; }
+        public IEnumerable<OrderItems> ProductOrders { get; set; } = new List<OrderItems>();
     }
 }
