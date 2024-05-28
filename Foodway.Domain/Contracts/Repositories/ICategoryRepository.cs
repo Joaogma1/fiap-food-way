@@ -5,5 +5,4 @@ namespace Foodway.Domain.Contracts.Repositories;
 
 public interface ICategoryRepository : IRepository<Category>
 {
-    
 }

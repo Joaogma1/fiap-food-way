@@ -2,12 +2,11 @@
 using Foodway.Domain.Entities;
 using Foodway.Infrastructure.Contexts;
 
-namespace Foodway.Infrastructure.Repositories
+namespace Foodway.Infrastructure.Repositories;
+
+public class CategoryRepository : Repository<Category>, ICategoryRepository
 {
-    public class CategoryRepository : Repository<Category>, ICategoryRepository
+    public CategoryRepository(AppDbContext context) : base(context)
     {
-        public CategoryRepository(AppDbContext context) : base(context)
-        {
-        }
     }
 }

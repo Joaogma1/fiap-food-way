@@ -74,7 +74,7 @@ namespace Foodway.Infrastructure.Migrations
                     b.ToTable("category");
                 });
 
-            modelBuilder.Entity("Foodway.Domain.Entities.Clients", b =>
+            modelBuilder.Entity("Foodway.Domain.Entities.Client", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

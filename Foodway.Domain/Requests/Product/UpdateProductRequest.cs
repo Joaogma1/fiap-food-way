@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
-namespace Foodway.Domain.Requests.Product
+namespace Foodway.Domain.Requests.Product;
+
+public class UpdateProductRequest : CreateProductRequest
 {
-    public class UpdateProductRequest : CreateProductRequest
-    {
-        [JsonIgnore]
-        public Guid? Id { get; set; }
-    }
+    [JsonIgnore] public Guid? Id { get; set; }
 }

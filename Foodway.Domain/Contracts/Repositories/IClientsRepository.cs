@@ -3,7 +3,6 @@ using Foodway.Shared.Persistence;
 
 namespace Foodway.Domain.Contracts.Repositories;
 
-public interface IClientsRepository : IRepository<Clients>
+public interface IClientsRepository : IRepository<Client>
 {
-    
 }

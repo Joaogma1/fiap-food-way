@@ -19,9 +19,7 @@ public static class DataBaseConfig
             options.UseNpgsql(connectionString,
                 c => { c.EnableRetryOnFailure(); });
             if (webHostEnvironment is not null && webHostEnvironment.IsDevelopment())
-            {
-            options.EnableSensitiveDataLogging();
-            }
+                options.EnableSensitiveDataLogging();
         });
         return services;
     }

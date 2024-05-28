@@ -9,29 +9,29 @@ public static class MapExtensions
 {
     public static void MapBaseEntity<T>(this EntityTypeBuilder<T> builder) where T : BaseAuditableEntity
     {
-
         builder.Property(t => t.CreatedAt)
-                .HasColumnType("timestamp")
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .IsRequired();
+            .HasColumnType("timestamp")
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .IsRequired();
 
         builder.Property(t => t.LastModifiedAt)
-        .HasColumnType("timestamp")
-        .ValueGeneratedOnAddOrUpdate()
-        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-        .IsRequired();
+            .HasColumnType("timestamp")
+            .ValueGeneratedOnAddOrUpdate()
+            .HasDefaultValueSql("CURRENT_TIMESTAMP")
+            .IsRequired();
 
         builder.MapVarchar(t => t.CreatedBy, 255, false);
         builder.MapVarchar(t => t.LastModifiedBy, 255, false);
 
-        builder.MapBit(t => t.IsDeleted,defaultValue: false);
+        builder.MapBit(t => t.IsDeleted, defaultValue: false);
 
         builder.HasQueryFilter(t => !t.IsDeleted);
     }
+
     public static PropertyBuilder<int> MapIdentifier<T>(this EntityTypeBuilder<T> builder,
-     Expression<Func<T, int>> exp,
-     string? columnName = null)
-     where T : class
+        Expression<Func<T, int>> exp,
+        string? columnName = null)
+        where T : class
     {
         return builder.Property(exp)
             .HasColumnName(columnName ?? exp.Name?.ToLower())
@@ -40,16 +40,33 @@ public static class MapExtensions
             .IsRequired();
     }
 
-    public static PropertyBuilder<Guid> MapUniqueIdentifier<T>(this EntityTypeBuilder<T> builder,
-        Expression<Func<T, Guid>> exp,
+    public static PropertyBuilder<int> MapNumber<T>(this EntityTypeBuilder<T> builder,
+        Expression<Func<T, int>> exp,
+        bool required = false,
         string? columnName = null)
         where T : class
     {
-        return builder.Property(exp)
+        var b = builder.Property(exp)
             .HasColumnName(columnName ?? exp.Name?.ToLower())
-            .HasColumnType("uuid")
-            .ValueGeneratedOnAdd()
-            .IsRequired();
+            .HasColumnType("integer");
+
+        return required ? b.IsRequired() : b;
+    }
+
+    public static PropertyBuilder<Guid> MapUniqueIdentifier<T>(this EntityTypeBuilder<T> builder,
+        Expression<Func<T, Guid>> exp,
+        bool isPrimaryKey = true,
+        string? columnName = null)
+        where T : class
+    {
+        var b = builder.Property(exp)
+            .HasColumnName(columnName ?? exp.Name?.ToLower())
+            .HasColumnType("uuid");
+
+        return isPrimaryKey
+            ? b.ValueGeneratedOnAdd()
+                .IsRequired()
+            : b;
     }
 
     public static PropertyBuilder<Guid?> MapUniqueIdentifier<T>(this EntityTypeBuilder<T> builder,
@@ -77,14 +94,14 @@ public static class MapExtensions
     }
 
     public static PropertyBuilder<string> MapText<T>(this EntityTypeBuilder<T> builder,
-    Expression<Func<T, string>> exp,
-    bool isRequired,
-    string? columnName = null)
-    where T : class
+        Expression<Func<T, string>> exp,
+        bool isRequired,
+        string? columnName = null)
+        where T : class
     {
         var b = builder.Property(exp)
             .HasColumnName(columnName ?? exp.Name)
-            .HasColumnType($"text");
+            .HasColumnType("text");
         return isRequired ? b.IsRequired() : b;
     }
 
@@ -94,10 +111,10 @@ public static class MapExtensions
         where T : class
     {
         return builder.Property(exp)
-             .HasColumnName(columnName ?? exp.Name)
-             .HasColumnType("boolean")
-             .HasDefaultValue(defaultValue)
-             .IsRequired();
+            .HasColumnName(columnName ?? exp.Name)
+            .HasColumnType("boolean")
+            .HasDefaultValue(defaultValue)
+            .IsRequired();
     }
 
     public static PropertyBuilder<bool?> MapBit<T>(this EntityTypeBuilder<T> builder,
@@ -125,14 +142,14 @@ public static class MapExtensions
     }
 
     public static PropertyBuilder<decimal> MapMoney<T>(this EntityTypeBuilder<T> builder,
-    Expression<Func<T, decimal>> exp,
-    bool isRequired,
-    string? columnName = null)
-    where T : class
+        Expression<Func<T, decimal>> exp,
+        bool isRequired,
+        string? columnName = null)
+        where T : class
     {
         var b = builder.Property(exp)
             .HasColumnName(columnName ?? exp.Name)
-            .HasColumnType($"decimal(18,2)");
+            .HasColumnType("decimal(18,2)");
         return isRequired ? b.IsRequired() : b;
     }
 }

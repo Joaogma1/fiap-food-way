@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Foodway.Infrastructure.EntityMaps;
 
-public class ClientsMap : IEntityTypeConfiguration<Clients>
+public class ClientsMap : IEntityTypeConfiguration<Client>
 {
-    public void Configure(EntityTypeBuilder<Clients> builder)
+    public void Configure(EntityTypeBuilder<Client> builder)
     {
         builder.MapBaseEntity();
 

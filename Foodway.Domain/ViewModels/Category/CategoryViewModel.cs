@@ -1,4 +1,4 @@
-namespace Foodway.Domain.ViewModels.Role;
+namespace Foodway.Domain.ViewModels.Category;
 
 public class CategoryViewModel
 {

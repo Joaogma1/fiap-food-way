@@ -1,16 +1,10 @@
 ﻿using Foodway.Domain.Requests.Category;
-using Foodway.Domain.ViewModels.Role;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Foodway.Domain.ViewModels.Category;
 
-namespace Foodway.Application.Contracts.Services
+namespace Foodway.Application.Contracts.Services;
+
+public interface ICategoryService
 {
-    public interface ICategoryService
-    {
-        Task<string> CreateAsync(CreateCategoryRequest req);
-        Task<IEnumerable<CategoryViewModel>> GetAllAsync();
-    }
+    Task<string> CreateAsync(CreateCategoryRequest req);
+    Task<IEnumerable<CategoryViewModel>> GetAllAsync();
 }

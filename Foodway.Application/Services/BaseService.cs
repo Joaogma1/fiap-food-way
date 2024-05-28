@@ -1,5 +1,5 @@
-using Foodway.Shared.Notifications;
 using FluentValidation.Results;
+using Foodway.Shared.Notifications;
 using Microsoft.AspNetCore.Identity;
 
 namespace Foodway.Application.Services;

@@ -16,11 +16,13 @@ COPY . .
 WORKDIR /src/Foodway.Api
 RUN dotnet publish -c Release -o /app/publish
 
+# Use the official ASP.NET Core runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
-EXPOSE 80
+# Expose ports
+EXPOSE 8080
 
 # Entry point to run the application
 ENTRYPOINT ["dotnet", "Foodway.Api.dll"]

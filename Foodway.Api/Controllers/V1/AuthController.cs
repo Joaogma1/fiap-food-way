@@ -15,7 +15,6 @@ namespace Foodway.Api.Controllers.V1;
 [AllowAnonymous]
 public class AuthController : BaseApiController
 {
-
     public AuthController(IDomainNotification domainNotification) : base(domainNotification)
     {
     }

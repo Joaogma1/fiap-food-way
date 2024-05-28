@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Foodway.Application\Foodway.Application.csproj" />
-        <ProjectReference Include="..\Foodway.Infrastructure\Foodway.Infrastructure.csproj" />
+        <ProjectReference Include="..\Foodway.Application\Foodway.Application.csproj"/>
+        <ProjectReference Include="..\Foodway.Infrastructure\Foodway.Infrastructure.csproj"/>
     </ItemGroup>
 
 </Project>
