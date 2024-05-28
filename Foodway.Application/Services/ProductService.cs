@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using FluentValidation;
+﻿using FluentValidation;
 using Foodway.Application.Contracts.Services;
 using Foodway.Domain.Contracts.Repositories;
 using Foodway.Domain.Entities;
@@ -11,40 +10,119 @@ using Foodway.Shared.Helpers;
 using Foodway.Shared.Notifications;
 using Foodway.Shared.Pagination;
 
-namespace Foodway.Application.Services
-{
-    public class ProductService : BaseService, IProductService
-    {
-        private readonly IProductRepository _productRepository;
-        private readonly IValidator<CreateProductRequest> _createProductValidator;
-        private readonly IValidator<UpdateProductRequest> _updateProductValidator;
-        private readonly ICategoryRepository _categoryRepository;
+namespace Foodway.Application.Services;
 
-        public ProductService(IDomainNotification notifications, IProductRepository productRepository, IValidator<CreateProductRequest> createProductValidator, IValidator<UpdateProductRequest> updateProductValidator, ICategoryRepository categoryRepository) : base(notifications)
+public class ProductService : BaseService, IProductService
+{
+    private readonly ICategoryRepository _categoryRepository;
+    private readonly IValidator<CreateProductRequest> _createProductValidator;
+    private readonly IProductRepository _productRepository;
+    private readonly IValidator<UpdateProductRequest> _updateProductValidator;
+
+    public ProductService(IDomainNotification notifications, IProductRepository productRepository,
+        IValidator<CreateProductRequest> createProductValidator,
+        IValidator<UpdateProductRequest> updateProductValidator,
+        ICategoryRepository categoryRepository) : base(notifications)
+    {
+        _productRepository = productRepository;
+        _createProductValidator = createProductValidator;
+        _updateProductValidator = updateProductValidator;
+        _categoryRepository = categoryRepository;
+    }
+
+    public async Task<string> CreateAsync(CreateProductRequest req)
+    {
+        var reqValidation = await _createProductValidator.ValidateAsync(req);
+
+        if (!reqValidation.IsValid)
         {
-            _productRepository = productRepository;
-            _createProductValidator = createProductValidator;
-            _updateProductValidator = updateProductValidator;
-            _categoryRepository = categoryRepository;
+            HandleValidationErrors(reqValidation);
+            return "";
         }
 
-        public async Task<string> CreateAsync(CreateProductRequest req)
+        if (!await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId))
         {
-            var reqValidation = await _createProductValidator.ValidateAsync(req);
+            Notifications.Handle("Category", $"{req.CategoryId} does not exists");
+            return "";
+        }
 
-            if (!reqValidation.IsValid)
-            {
-                HandleValidationErrors(reqValidation);
-                return "";
-            }
+        var product = new Product
+        {
+            CategoryId = req.CategoryId,
+            Name = req.Name,
+            Description = req.Description,
+            Price = req.Price,
+            CreatedBy = "BackOffice",
+            LastModifiedBy = "BackOffice"
+        };
+        product.Stock = new ProductStock
+        {
+            Product = product,
+            QuantityInStock = req.Stock,
+            ProductId = default
+        };
 
-            if (!(await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId)))
-            {
-                this.Notifications.Handle("Category", $"{req.CategoryId} does not exists");
-                return "";
-            }
+        var createdProduct = await _productRepository.AddAsync(product);
+        await _productRepository.SaveChanges();
+        return createdProduct.Id.ToString();
+    }
 
-            var product = new Product()
+    public async Task<bool> DeleteAsync(Guid id)
+    {
+        if (!await _productRepository.AnyAsync(x => x.Id == id))
+        {
+            Notifications.Handle("Product", $"{id} does not exists");
+            return false;
+        }
+
+        var product = await _productRepository.FindAsync(x => x.Id == id);
+
+        product!.IsDeleted = true;
+
+        await _productRepository.SaveChanges();
+
+        return true;
+    }
+
+    public async Task<ProductViewModel?> GetByIdAsync(Guid id)
+    {
+        if (!await _productRepository.AnyAsync(x => x.Id == id)) return null;
+        var joins = new IncludeHelper<Product>().Include(x => x.Category).Include(x => x.Stock).Includes;
+
+        return (await _productRepository.FindAsyncAsNoTracking(x => x.Id == id, joins)).ToViewModel();
+    }
+
+    public async Task<PagedList<ProductViewModel>> getPagedAsync(ProductFilter filter)
+    {
+        var where = _productRepository.Where(filter);
+
+        var data = _productRepository.PagedListAsNoTracking(where, filter, x => x.Category, x => x.Stock);
+
+        return new PagedList<ProductViewModel>(data.Items.ToViewModel(), data.TotalPages, data.PageSize);
+    }
+
+    public async Task<string> UpdateAsync(UpdateProductRequest req)
+    {
+        var reqValidation = await _updateProductValidator.ValidateAsync(req);
+
+        if (!reqValidation.IsValid)
+        {
+            HandleValidationErrors(reqValidation);
+            return "";
+        }
+
+        if (!await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId))
+        {
+            Notifications.Handle("Category", $"{req.CategoryId} does not exists");
+            return "";
+        }
+
+        var joins = new IncludeHelper<Product>().Include(x => x.Category).Include(x => x.Stock).Includes;
+
+        var product = await _productRepository.FindAsync(x => x.Id == req.Id, joins);
+        if (product == null)
+        {
+            var createdProduct = await _productRepository.AddAsync(new Product
             {
                 CategoryId = req.CategoryId,
                 Name = req.Name,
@@ -52,108 +130,28 @@ namespace Foodway.Application.Services
                 Price = req.Price,
                 CreatedBy = "BackOffice",
                 LastModifiedBy = "BackOffice",
-            };
-            product.Stock = new ProductStock
-            {
-                Product = product,
-                QuantityInStock = req.Stock,
-                ProductId = default
-            };
-
-            var createdProduct = await _productRepository.AddAsync(product);
+                Stock = new ProductStock
+                {
+                    QuantityInStock = req.Stock,
+                    Product = default,
+                    ProductId = default
+                }
+            });
             await _productRepository.SaveChanges();
             return createdProduct.Id.ToString();
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            if (!(await _productRepository.AnyAsync(x => x.Id == id)))
-            {
-                this.Notifications.Handle("Product", $"{id} does not exists");
-                return false;
-            }
-
-            var product = await _productRepository.FindAsync(x => x.Id == id);
-
-            product!.IsDeleted = true;
-
-            await _productRepository.SaveChanges();
-
-            return true;
-        }
-
-        public async Task<ProductViewModel?> GetByIdAsync(Guid id)
-        {
-            if (!(await _productRepository.AnyAsync(x => x.Id ==id)))
-            {
-                return null;
-            }
-            var joins = new IncludeHelper<Product>().Include(x => x.Category).Include(x=>x.Stock).Includes;
-
-            return (await _productRepository.FindAsyncAsNoTracking(x => x.Id == id, joins)).ToViewModel();
-        }
-
-        public async Task<PagedList<ProductViewModel>> getPagedAsync(ProductFilter filter)
-        {
-            var where = _productRepository.Where(filter);
-            
-            var data = _productRepository.PagedListAsNoTracking(where, filter,x => x.Category,x=>x.Stock);
-
-            return new PagedList<ProductViewModel>(data.Items.ToViewModel(), data.TotalPages,data.PageSize);
-        }
-
-        public async Task<string> UpdateAsync(UpdateProductRequest req)
-        {
-            var reqValidation = await _updateProductValidator.ValidateAsync(req);
-
-            if (!reqValidation.IsValid)
-            {
-                HandleValidationErrors(reqValidation);
-                return "";
-            }
-            if (!(await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId)))
-            {
-                this.Notifications.Handle("Category", $"{req.CategoryId} does not exists");
-                return "";
-            }
-            
-            var joins = new IncludeHelper<Product>().Include(x => x.Category).Include(x=>x.Stock).Includes;
-
-            var product = await _productRepository.FindAsync(x => x.Id == req.Id,joins);
-            if (product == null)
-            {
-                var createdProduct = await _productRepository.AddAsync(new Product
-                {
-                    CategoryId = req.CategoryId,
-                    Name = req.Name,
-                    Description = req.Description,
-                    Price = req.Price,
-                    CreatedBy = "BackOffice",
-                    LastModifiedBy = "BackOffice",
-                    Stock = new ProductStock()
-                    {
-                        QuantityInStock = req.Stock,
-                        Product = default,
-                        ProductId = default
-                    }
-                });
-                await _productRepository.SaveChanges();
-                return createdProduct.Id.ToString();
-            }
-            UpdateProduct(ref product, req);
-            await _productRepository.SaveChanges();
-            return product.Id.ToString();
-        }
-
-        private void UpdateProduct(ref Product product, UpdateProductRequest req)
-        {
-            product.Name = req.Name;
-            product.Description = req.Description;
-            product.Price = req.Price;
-            product.CategoryId = req.CategoryId;
-            product.Stock.QuantityInStock = req.Stock;
-        }
+        UpdateProduct(ref product, req);
+        await _productRepository.SaveChanges();
+        return product.Id.ToString();
     }
 
-   
+    private void UpdateProduct(ref Product product, UpdateProductRequest req)
+    {
+        product.Name = req.Name;
+        product.Description = req.Description;
+        product.Price = req.Price;
+        product.CategoryId = req.CategoryId;
+        product.Stock.QuantityInStock = req.Stock;
+    }
 }

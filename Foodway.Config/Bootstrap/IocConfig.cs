@@ -25,6 +25,7 @@ public static class IocConfig
 
         services.AddScoped<IDomainNotification, DomainNotification>();
         services.AddRepositories(typeof(CategoryRepository).Assembly);
+
         #endregion
 
         services.AddApplicationServices();

@@ -1,5 +1,5 @@
-using Foodway.Domain.Requests.Auth;
 using FluentValidation;
+using Foodway.Domain.Requests.Auth;
 
 namespace Foodway.Application.Validations;
 

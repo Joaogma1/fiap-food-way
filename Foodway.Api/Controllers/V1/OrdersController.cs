@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Foodway.Api.Controllers.V1;
+
 [Produces("application/json")]
 [ApiController]
 [Route("[controller]")]
@@ -13,12 +14,13 @@ namespace Foodway.Api.Controllers.V1;
 public class OrdersController : BaseApiController
 {
     private readonly IOrderService _orderService;
-    
-    public OrdersController(IDomainNotification domainNotification, IOrderService orderService) : base(domainNotification)
+
+    public OrdersController(IDomainNotification domainNotification, IOrderService orderService) : base(
+        domainNotification)
     {
         _orderService = orderService;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] OrdersFilter filter)
     {
@@ -34,7 +36,7 @@ public class OrdersController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateOrdersRequest req )
+    public async Task<IActionResult> Post([FromBody] CreateOrdersRequest req)
     {
         return CreatedResponse(await _orderService.CreateAsync(req));
     }
@@ -44,9 +46,7 @@ public class OrdersController : BaseApiController
     {
         req.OrderId = orderId;
         var result = await _orderService.UpdateOrderStatusAsync(req);
-        if (result)return NoContentResponse();
+        if (result) return NoContentResponse();
         return NotFound();
-
     }
-    
 }

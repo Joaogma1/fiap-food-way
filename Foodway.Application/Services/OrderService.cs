@@ -11,7 +11,6 @@ using Foodway.Shared.Enums;
 using Foodway.Shared.Helpers;
 using Foodway.Shared.Notifications;
 using Foodway.Shared.Pagination;
-using Microsoft.EntityFrameworkCore;
 
 namespace Foodway.Application.Services;
 
@@ -20,8 +19,10 @@ public class OrderService : BaseService, IOrderService
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
     private readonly IValidator<CreateOrdersRequest> createOrderReqValidator;
-    
-    public OrderService(IDomainNotification notifications, IOrderRepository orderRepository, IValidator<CreateOrdersRequest> createOrderReqValidator, IProductRepository productRepository) : base(notifications)
+
+    public OrderService(IDomainNotification notifications, IOrderRepository orderRepository,
+        IValidator<CreateOrdersRequest> createOrderReqValidator,
+        IProductRepository productRepository) : base(notifications)
     {
         _orderRepository = orderRepository;
         this.createOrderReqValidator = createOrderReqValidator;
@@ -37,11 +38,11 @@ public class OrderService : BaseService, IOrderService
             .Include(x => x.OrderItems.Select(y => y.Product.Stock))
             .Include(x => x.OrderItems.Select(y => y.Product.Category))
             .Includes;
-        
+
         var where = _orderRepository.Where(filter);
         var total = await _orderRepository.CountAsync(where);
         var items = (await _orderRepository.ListAsNoTrackingAsync(
-            where,filter.PageIndex,filter.PageSize,includes: joins
+            where, filter.PageIndex, filter.PageSize, includes: joins
         )).ToViewModel().ToList();
 
         return new PagedList<OrderViewModel>(items, total, filter.PageSize);
@@ -56,29 +57,26 @@ public class OrderService : BaseService, IOrderService
             .Include(x => x.OrderItems.Select(y => y.Product.Stock))
             .Include(x => x.OrderItems.Select(y => y.Product.Category))
             .Includes;
-        var result = await _orderRepository.FindAsync(x => x.Id == id, includes: joins);
+        var result = await _orderRepository.FindAsync(x => x.Id == id, joins);
         return result.ToViewModel();
     }
 
     public async Task<string?> CreateAsync(CreateOrdersRequest req)
     {
         var validationResult = await createOrderReqValidator.ValidateAsync(req);
-        
-        if (!validationResult.IsValid)
-        {
-            HandleValidationErrors(validationResult);
-        }
-        
-        var order = await _orderRepository.AddAsync(new Order()
+
+        if (!validationResult.IsValid) HandleValidationErrors(validationResult);
+
+        var order = await _orderRepository.AddAsync(new Order
         {
             ClientId = req.ClientId,
             OrderCode = StringGeneratorHelper.RandomCode(),
             CreatedBy = "Checkout",
             LastModifiedBy = "Checkout"
         });
-        
+
         await _orderRepository.SaveChanges();
-        
+
         try
         {
             var joins = new IncludeHelper<Product>()
@@ -86,43 +84,40 @@ public class OrderService : BaseService, IOrderService
                 .Includes;
 
             var notAvailableProducts = (await _productRepository.ListAsNoTrackingAsync(
-                x => x.Stock.QuantityInStock == 0,includes:joins)).ToList();
-            
-            if (req.Items.Any(x => notAvailableProducts.Any(y => y.Id == x.ProductId && y.Stock.QuantityInStock < x.Quantity)))
+                x => x.Stock.QuantityInStock == 0, includes: joins)).ToList();
+
+            if (req.Items.Any(x =>
+                    notAvailableProducts.Any(y => y.Id == x.ProductId && y.Stock.QuantityInStock < x.Quantity)))
             {
                 foreach (var product in notAvailableProducts)
-                {
-                    this.Notifications.Handle($"{product.Id.ToString()}-missing",
+                    Notifications.Handle($"{product.Id.ToString()}-missing",
                         $"Product: {product.Name} is not available");
-                }
 
                 return null;
             }
+
             foreach (var item in req.Items)
             {
                 order.OrderItems.Add(new OrderItems
                 {
                     ProductId = item.ProductId,
                     OrderId = order.Id,
-                    Quantity = item.Quantity,
+                    Quantity = item.Quantity
                 });
-                
-                var itemInDb = await _productRepository.FindAsync(x => x.Id == item.ProductId, includes:joins);
+
+                var itemInDb = await _productRepository.FindAsync(x => x.Id == item.ProductId, joins);
                 if (itemInDb is null)
                 {
-                    this.Notifications.Handle($"{item.ProductId.ToString()}-missing",
+                    Notifications.Handle($"{item.ProductId.ToString()}-missing",
                         $"Product: {item.ProductId} is not available");
                     continue;
                 }
-                
+
                 itemInDb.Stock.QuantityInStock -= item.Quantity;
                 _productRepository.Modify(itemInDb);
             }
 
-            if (this.Notifications.HasNotifications())
-            {
-                throw new Exception("Unable to Save Order" );
-            }
+            if (Notifications.HasNotifications()) throw new Exception("Unable to Save Order");
             await _orderRepository.SaveChanges();
             return order.Id.ToString();
         }
@@ -130,7 +125,7 @@ public class OrderService : BaseService, IOrderService
         {
             order.OrderStatus = OrderStatus.Cancelled;
             await _orderRepository.SaveChanges();
-            this.Notifications.Handle("EntityError","Unable to process Order");
+            Notifications.Handle("EntityError", "Unable to process Order");
             return order.Id.ToString();
         }
     }
@@ -140,16 +135,15 @@ public class OrderService : BaseService, IOrderService
         var order = await _orderRepository.FindAsync(x => x.Id == req.OrderId);
         if (order is null) return false;
 
-        if (order.PaymentStatus == PaymentStatus.Approved &&  req.OrderStatus > order.OrderStatus )
+        if (order.PaymentStatus == PaymentStatus.Approved && req.OrderStatus > order.OrderStatus)
         {
             order.OrderStatus = req.OrderStatus;
             _orderRepository.Modify(order);
             await _orderRepository.SaveChanges();
             return true;
         }
-        
-        this.Notifications.Handle("Entity Error", "Was not possible to update Status");
+
+        Notifications.Handle("Entity Error", "Was not possible to update Status");
         return false;
     }
-    
 }

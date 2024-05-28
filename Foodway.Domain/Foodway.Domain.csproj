@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Compile Remove="Requests\Door\**" />
-      <EmbeddedResource Remove="Requests\Door\**" />
-      <None Remove="Requests\Door\**" />
+        <Compile Remove="Requests\Door\**"/>
+        <EmbeddedResource Remove="Requests\Door\**"/>
+        <None Remove="Requests\Door\**"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -17,11 +17,11 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Foodway.Shared\Foodway.Shared.csproj" />
+        <ProjectReference Include="..\Foodway.Shared\Foodway.Shared.csproj"/>
     </ItemGroup>
 
 </Project>

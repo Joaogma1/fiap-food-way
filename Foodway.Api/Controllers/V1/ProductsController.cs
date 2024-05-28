@@ -3,66 +3,61 @@ using Foodway.Domain.QueryFilters;
 using Foodway.Domain.Requests.Product;
 using Foodway.Shared.Notifications;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Foodway.Api.Controllers.V1
+namespace Foodway.Api.Controllers.V1;
+
+[Produces("application/json")]
+[ApiController]
+[Route("[controller]")]
+[AllowAnonymous]
+public class ProductsController : BaseApiController
 {
-    [Produces("application/json")]
-    [ApiController]
-    [Route("[controller]")]
-    [AllowAnonymous]
-    public class ProductsController : BaseApiController
+    private readonly IProductService _productService;
+
+    public ProductsController(IDomainNotification domainNotification, IProductService productService) : base(
+        domainNotification)
     {
-        private readonly IProductService _productService;
+        _productService = productService;
+    }
 
-        public ProductsController(IDomainNotification domainNotification, IProductService productService) : base(domainNotification)
-        {
-            _productService = productService;
-        }
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery] ProductFilter filter)
+    {
+        return CreateResponse(await _productService.getPagedAsync(filter));
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] ProductFilter filter)
-        {
-            return CreateResponse(await _productService.getPagedAsync(filter));
-        }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var result = await _productService.GetByIdAsync(id);
+        if (result is null) return NotFoundResponse();
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var result = await _productService.GetByIdAsync(id);
-            if (result is null) return NotFoundResponse();
+        return CreateResponse(result);
+    }
 
-            return CreateResponse(result);
-        }
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] CreateProductRequest req)
+    {
+        return CreatedResponse(await _productService.CreateAsync(req));
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateProductRequest req )
-        {
-            return CreatedResponse(await _productService.CreateAsync(req));
-        }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(Guid? id, [FromBody] UpdateProductRequest req)
+    {
+        req.Id = id;
+        var result = await _productService.UpdateAsync(req);
+        if (id == null) return CreatedResponse(result);
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid? id, [FromBody] UpdateProductRequest req)
-        {
-            req.Id = id;
-            var result = await _productService.UpdateAsync(req);
-            if (id == null)
-            {
-                return CreatedResponse(result);
-            }
+        return NoContentResponse();
+    }
 
-            return NoContentResponse();
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var result = await _productService.DeleteAsync(id);
+        if (result is false) return NotFoundResponse();
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var result = await _productService.DeleteAsync(id);
-            if (result is false) return NotFoundResponse();
-
-            return NoContent();
-        }
-
+        return NoContent();
     }
 }

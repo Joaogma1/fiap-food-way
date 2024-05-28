@@ -21,18 +21,18 @@ public class OrderRepository : Repository<Order>, IOrderRepository
         predicate = string.IsNullOrEmpty(filter.Code)
             ? predicate
             : predicate.And(x => x.OrderCode!.ToLower() == filter.Code.ToLower());
-        
+
         predicate = filter.PaymentStatus is null
             ? predicate.And(x => x.PaymentStatus == PaymentStatus.Approved)
             : predicate.And(x => x.PaymentStatus == filter.PaymentStatus);
-        
+
         predicate = filter.OrderStatus is null
             ? predicate.And(x => x.OrderStatus == OrderStatus.ReadyForPickUp)
             : predicate.And(x => x.OrderStatus == filter.OrderStatus);
         predicate = filter.ClientId is null || filter.ClientId == Guid.Empty
             ? predicate
             : predicate.And(x => x.ClientId == filter.ClientId);
-        
+
         return predicate;
     }
 }

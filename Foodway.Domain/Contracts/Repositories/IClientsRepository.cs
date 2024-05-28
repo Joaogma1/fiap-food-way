@@ -5,5 +5,4 @@ namespace Foodway.Domain.Contracts.Repositories;
 
 public interface IClientsRepository : IRepository<Client>
 {
-    
 }

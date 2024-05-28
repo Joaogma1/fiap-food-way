@@ -5,7 +5,7 @@ using Foodway.Shared.Persistence;
 
 namespace Foodway.Domain.Contracts.Repositories;
 
-public interface IOrderRepository : IRepository<Order> 
+public interface IOrderRepository : IRepository<Order>
 {
     Expression<Func<Order, bool>> Where(OrdersFilter filter);
 }

@@ -2,29 +2,22 @@
 using Foodway.Infrastructure.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Foodway.Infrastructure.EntityMaps
+namespace Foodway.Infrastructure.EntityMaps;
+
+public class ProductStockMap : IEntityTypeConfiguration<ProductStock>
 {
-    public class ProductStockMap : IEntityTypeConfiguration<ProductStock>
+    public void Configure(EntityTypeBuilder<ProductStock> builder)
     {
-        public void Configure(EntityTypeBuilder<ProductStock> builder)
-        {
-            builder.MapNumber(x => x.QuantityInStock,true);
+        builder.MapNumber(x => x.QuantityInStock, true);
 
-            builder.MapUniqueIdentifier(x => x.Id);
+        builder.MapUniqueIdentifier(x => x.Id);
 
-            builder.HasOne(x => x.Product)
-                .WithOne(x => x.Stock)
-                .HasForeignKey<ProductStock>(x => x.ProductId)
-                .IsRequired();
+        builder.HasOne(x => x.Product)
+            .WithOne(x => x.Stock)
+            .HasForeignKey<ProductStock>(x => x.ProductId)
+            .IsRequired();
 
-            builder.HasKey(x => new { x.ProductId, x.Id});
-
-        }
+        builder.HasKey(x => new { x.ProductId, x.Id });
     }
 }

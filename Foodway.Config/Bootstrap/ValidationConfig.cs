@@ -1,5 +1,5 @@
-using Foodway.Application.Validations;
 using FluentValidation;
+using Foodway.Application.Validations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Foodway.Config.Bootstrap;

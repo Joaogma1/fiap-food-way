@@ -4,34 +4,34 @@ using Foodway.Shared.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Foodway.Api.Controllers.V1
+namespace Foodway.Api.Controllers.V1;
+
+[Produces("application/json")]
+[ApiController]
+[Route("[controller]")]
+[AllowAnonymous]
+public class ClientsController : BaseApiController
 {
-    [Produces("application/json")]
-    [ApiController]
-    [Route("[controller]")]
-    [AllowAnonymous]
-    public class ClientsController : BaseApiController
+    private readonly IClientsService _clientsService;
+
+    public ClientsController(IDomainNotification domainNotification, IClientsService clientsService) : base(
+        domainNotification)
     {
-        private readonly IClientsService _clientsService;
-        public ClientsController(IDomainNotification domainNotification, IClientsService clientsService) : base(domainNotification)
-        {
-            _clientsService = clientsService;
-        }
+        _clientsService = clientsService;
+    }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateClient([FromBody] CreateClientRequest request)
-        {
-            return CreatedResponse(await _clientsService.CreateAsync(request));
-        }
+    [HttpPost]
+    public async Task<IActionResult> CreateClient([FromBody] CreateClientRequest request)
+    {
+        return CreatedResponse(await _clientsService.CreateAsync(request));
+    }
 
-        [HttpGet("{cpf}")]
-        public async Task<IActionResult> GetClientByCPF(string cpf)
-        {
-            var result = await _clientsService.GetByCPFAsync(cpf);
-            if (result is null) return NotFoundResponse();
+    [HttpGet("{cpf}")]
+    public async Task<IActionResult> GetClientByCPF(string cpf)
+    {
+        var result = await _clientsService.GetByCPFAsync(cpf);
+        if (result is null) return NotFoundResponse();
 
-            return CreateResponse(result);
-        }
-
+        return CreateResponse(result);
     }
 }

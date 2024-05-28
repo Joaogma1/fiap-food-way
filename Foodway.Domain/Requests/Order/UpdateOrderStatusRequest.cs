@@ -5,8 +5,7 @@ namespace Foodway.Domain.Requests.Order;
 
 public class UpdateOrderStatusRequest
 {
-    [JsonIgnore]
-    public Guid OrderId { get; set; }
-    
+    [JsonIgnore] public Guid OrderId { get; set; }
+
     public OrderStatus OrderStatus { get; set; }
 }

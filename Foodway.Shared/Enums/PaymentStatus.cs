@@ -1,14 +1,10 @@
 ﻿using System.ComponentModel;
 
-namespace Foodway.Shared.Enums
+namespace Foodway.Shared.Enums;
+
+public enum PaymentStatus
 {
-    public enum PaymentStatus
-    {
-        [Description("Aguardando Provedor")]
-        WaitingProvider,
-        [Description("Approvado")]
-        Approved,
-        [Description("Rejeitado")]
-        Rejected,
-    }
+    [Description("Aguardando Provedor")] WaitingProvider,
+    [Description("Approvado")] Approved,
+    [Description("Rejeitado")] Rejected
 }

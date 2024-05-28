@@ -7,7 +7,6 @@ public class CreateOrdersRequestValidator : BaseValidator<CreateOrdersRequest>
 {
     public CreateOrdersRequestValidator()
     {
-
         RuleFor(request => request.Items)
             .NotEmpty().WithMessage("At least one order item is required.");
 

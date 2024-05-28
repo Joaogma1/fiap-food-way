@@ -1,6 +1,5 @@
+using Foodway.Domain.ViewModels.Category;
 using Foodway.Domain.ViewModels.Clients;
-using Foodway.Domain.ViewModels.Product;
-using Foodway.Domain.ViewModels.Role;
 using Foodway.Shared.Enums;
 using Foodway.Shared.Extensions;
 
@@ -13,19 +12,18 @@ public class OrderViewModel
     public ClientsViewModel? Client { get; set; }
 
     public IEnumerable<OrderItemViewModel> Products { get; set; } = new List<OrderItemViewModel>();
-    
+
     public OrderStatus OrderStatus { get; set; }
-    
+
     public string OrderStatusDescription => OrderStatus.Description() ?? string.Empty;
     public PaymentStatus PaymentStatus { get; set; }
-    
+
     public string PaymentStatusDescription => PaymentStatus.Description() ?? string.Empty;
 
-    
-    public string? OrderCode { get; set; }
-    
-    public decimal Total { get; set; }
 
+    public string? OrderCode { get; set; }
+
+    public decimal Total { get; set; }
 }
 
 public class OrderItemViewModel
@@ -33,6 +31,7 @@ public class OrderItemViewModel
     public OrderProductViewModel Product { get; set; }
     public int Quantity { get; set; }
 }
+
 public class OrderProductViewModel
 {
     public Guid Id { get; set; }

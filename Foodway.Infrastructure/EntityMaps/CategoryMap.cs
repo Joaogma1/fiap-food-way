@@ -14,6 +14,5 @@ public class CategoryMap : IEntityTypeConfiguration<Category>
         builder.MapVarchar(r => r.Name, 255, false);
 
         builder.MapIdentifier(c => c.Id);
-
     }
 }

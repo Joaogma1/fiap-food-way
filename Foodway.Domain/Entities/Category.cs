@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-
 namespace Foodway.Domain.Entities;
 
 /// <summary>
@@ -8,9 +6,8 @@ namespace Foodway.Domain.Entities;
 public class Category : BaseAuditableEntity
 {
     public int Id { get; set; }
-    
+
     public string Name { get; set; }
 
     public IEnumerable<Product>? Products { get; set; }
-
 }

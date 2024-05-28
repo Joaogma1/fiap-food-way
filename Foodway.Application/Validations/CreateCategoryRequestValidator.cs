@@ -1,5 +1,5 @@
-using Foodway.Domain.Requests.Category;
 using FluentValidation;
+using Foodway.Domain.Requests.Category;
 
 namespace Foodway.Application.Validations;
 
