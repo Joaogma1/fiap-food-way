@@ -1,10 +1,10 @@
 # Contributing to Foodway API
 
-Obrigado por considerar contribuir para o projeto Foodway API! Este documento fornece diretrizes para ajudar você a contribuir de forma eficaz.
+Obrigado por considerar contribuir para o projeto Foodway API! Este documento fornece diretrizes para ajudar vocÃª a contribuir de forma eficaz.
 
 ## Requisitos de Sistema
 
-Certifique-se de que você tenha as seguintes ferramentas instaladas no seu sistema:
+Certifique-se de que vocÃª tenha as seguintes ferramentas instaladas no seu sistema:
 
 - .NET Core SDK net 8.0 ou superior
 - Visual Studio 2022 ou superior, ou Visual Studio Code ou Jetbrains Rider.
@@ -13,15 +13,15 @@ Certifique-se de que você tenha as seguintes ferramentas instaladas no seu siste
 
 ## Estrutura do Projeto
 
-A arquitetura do projeto é baseada na Arquitetura Hexagonal (ou Arquitetura de Cebola), que organiza o código em camadas distintas:
+A arquitetura do projeto Ã© baseada na Arquitetura Hexagonal (ou Arquitetura de Cebola), que organiza o cÃ³digo em camadas distintas:
 
 Para mais detalhes sobre a estrutura do projeto, consulte [Overview.md](Overview.md).
 
 ## Passos para Contribuir
 
-### 1. Faça Clone do Repositório
+### 1. FaÃ§a Clone do RepositÃ³rio
 
-Clone do repositório.
+Clone do repositÃ³rio.
 
 ### 2. Crie um Branch para a Sua Feature
 
@@ -31,48 +31,48 @@ Utilize o fluxo de [Git Flow](https://medium.com/trainingcenter/utilizando-o-flu
 git checkout -b minha-feature
 ```
 
-### 5. Faça suas Alterações
+### 5. FaÃ§a suas AlteraÃ§Ãµes
 
-- Presentation Layer (Foodway.Api): Para adicionar ou modificar endpoints e lógica de roteamento HTTP.
-- Application Layer (Foodway.Application): Para lógica de negócios e regras de aplicação.
-- Ao criar novos Services a camada de applicação deve-se atualizar o arquivo de Injeção de dependencia. localizado no projeto `Foodway.Config`
-- Domain Layer (Foodway.Domain): Para entidades de negócios e interfaces de repositório.
-- Infrastructure Layer (Foodway.Infrastructure): Para implementação de acesso a dados, integração com serviços externos, etc.
+- Presentation Layer (Foodway.Api): Para adicionar ou modificar endpoints e lÃ³gica de roteamento HTTP.
+- Application Layer (Foodway.Application): Para lÃ³gica de negÃ³cios e regras de aplicaÃ§Ã£o.
+- Ao criar novos Services a camada de applicaÃ§Ã£o deve-se atualizar o arquivo de InjeÃ§Ã£o de dependencia. localizado no projeto `Foodway.Config`
+- Domain Layer (Foodway.Domain): Para entidades de negÃ³cios e interfaces de repositÃ³rio.
+- Infrastructure Layer (Foodway.Infrastructure): Para implementaÃ§Ã£o de acesso a dados, integraÃ§Ã£o com serviÃ§os externos, etc.
 
 ### 6. Escreva Testes
-Certifique-se de adicionar ou modificar testes para cobrir suas alterações:
-- Use Moq para criar mocks das dependências.
-- Utilize XUnit ou MSTest para escrever testes unitários.
+Certifique-se de adicionar ou modificar testes para cobrir suas alteraÃ§Ãµes:
+- Use Moq para criar mocks das dependÃªncias.
+- Utilize XUnit ou MSTest para escrever testes unitÃ¡rios.
 
-### 7. Valide suas Alterações
-Execute todos os testes para garantir que suas alterações não quebrem nada:
+### 7. Valide suas AlteraÃ§Ãµes
+Execute todos os testes para garantir que suas alteraÃ§Ãµes nÃ£o quebrem nada:
 
 ```sh
 dotnet test
 ```
 
 ### 8. Commit e Push
-Faça commit das suas alterações com uma mensagem clara e concisa:
+FaÃ§a commit das suas alteraÃ§Ãµes com uma mensagem clara e concisa:
 ```sh
 git add .
-git commit -m "Descrição clara da feature ou correção"
+git commit -m "DescriÃ§Ã£o clara da feature ou correÃ§Ã£o"
 git push origin minha-feature
 ```
 
 ### 9. Abra um Pull Request
-Abra um pull request no repositório original e descreva as suas alterações detalhadamente.
+Abra um pull request no repositÃ³rio original e descreva as suas alteraÃ§Ãµes detalhadamente.
 
-### 10. Aguardando Revisão
-Outros mantenedores revisarão o seu pull request.
-Pode ser necessário fazer ajustes com base no feedback.
+### 10. Aguardando RevisÃ£o
+Outros mantenedores revisarÃ£o o seu pull request.
+Pode ser necessÃ¡rio fazer ajustes com base no feedback.
 
-### Diretrizes de Código
-- Siga o padrão de codificação do .NET Core e C#.
-- Mantenha o código limpo e bem documentado.
-- Siga os princípios da Arquitetura Hexagonal, separando claramente as responsabilidades entre as camadas.
+### Diretrizes de CÃ³digo
+- Siga o padrÃ£o de codificaÃ§Ã£o do .NET Core e C#.
+- Mantenha o cÃ³digo limpo e bem documentado.
+- Siga os princÃ­pios da Arquitetura Hexagonal, separando claramente as responsabilidades entre as camadas.
 
-### Comunicação
-Seja respeitoso e colaborativo nas comunicações.
+### ComunicaÃ§Ã£o
+Seja respeitoso e colaborativo nas comunicaÃ§Ãµes.
 
 Obrigado por contribuir!
 

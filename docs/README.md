@@ -1,4 +1,4 @@
-# FIAP-TechChallenge1
+# FIAP-TechChallenge 1
 Documentos referentes ao Tech Challenge
 
 Tech Challenge - Etapa 1
@@ -9,7 +9,31 @@ Tech Challenge - Etapa 1
  - Preparação e entrega do pedido.
 * É importante que os desenhos sigam os padrões utilizados na explicação.
 
----
+## Requisitos de Sistema
+
+Certifique-se de que você tenha as seguintes ferramentas instaladas no seu sistema:
+
+- .NET Core SDK net 8.0 ou superior
+- Visual Studio 2022 ou superior, ou Visual Studio Code ou Jetbrains Rider.
+- Git
+
+Ou
+- Docker
+
+## Rodando a aplicação no Docker 
+Utilize o **_docker compose_** na pasta root do Projeto:
+
+```sh
+docker-compose up -d
+```
+Podera encontrar o Swagger da aplicação na URL
+
+`http://localhost:8080/swagger/index.html`
+
+Ou 
+
+[Clique Aqui !](http://localhost:8080/swagger/index.html)
+
 # Linguagem Ubiqua
 
 ## Atores:

@@ -1,24 +1,24 @@
-# Como Mapear e Comandos para Criar Migrações e Atualizar o Banco de Dados
+# Como Mapear e Comandos para Criar MigraÃ§Ãµes e Atualizar o Banco de Dados
 
 ## Mapeamento de Entidades com Fluent API no EF Core
 
-Neste guia, vamos explicar como mapear entidades utilizando Fluent API no Entity Framework Core (EF Core). A Fluent API é uma forma alternativa de configurar o modelo de dados em comparação às convenções padrão do EF Core.
+Neste guia, vamos explicar como mapear entidades utilizando Fluent API no Entity Framework Core (EF Core). A Fluent API Ã© uma forma alternativa de configurar o modelo de dados em comparaÃ§Ã£o Ã s convenÃ§Ãµes padrÃ£o do EF Core.
 
-## Configuração Básica
+## ConfiguraÃ§Ã£o BÃ¡sica
 
-Para mapear entidades com Fluent API, você precisa acessar o método `OnModelCreating` no seu contexto de dados e usar os métodos fornecidos pela Fluent API para configurar o mapeamento das entidades.
+Para mapear entidades com Fluent API, vocÃª precisa acessar o mÃ©todo `OnModelCreating` no seu contexto de dados e usar os mÃ©todos fornecidos pela Fluent API para configurar o mapeamento das entidades.
 
-### Método `OnModelCreating`
+### MÃ©todo `OnModelCreating`
 
 ```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
-    // Configurações de mapeamento de entidades vão aqui
+    // ConfiguraÃ§Ãµes de mapeamento de entidades vÃ£o aqui
 }
 ```
 
 ### Mapeamento de Propriedades
-Você pode usar a Fluent API para configurar detalhes sobre as propriedades da sua entidade, como tipo de dados, tamanho máximo, chaves primárias, chaves estrangeiras, entre outros.
+VocÃª pode usar a Fluent API para configurar detalhes sobre as propriedades da sua entidade, como tipo de dados, tamanho mÃ¡ximo, chaves primÃ¡rias, chaves estrangeiras, entre outros.
 
 
 Exemplo de Mapeamento de Propriedades:
@@ -33,7 +33,7 @@ modelBuilder.Entity<Produto>()
     .HasColumnType("decimal(18,2)");
 ```
 
-- Utilize os methodos de extensão Criados para facilitar mapeamento
+- Utilize os methodos de extensÃ£o Criados para facilitar mapeamento
 
 ```csharp
 modelBuilder.Entity<Pedido>()
@@ -42,8 +42,8 @@ modelBuilder.Entity<Pedido>()
     .HasForeignKey(p => p.ClienteId);
 ```
 
-## Conclusão
-A Fluent API no EF Core oferece flexibilidade e controle sobre o mapeamento de entidades e seus relacionamentos. Utilize-a para configurar seu modelo de dados de acordo com os requisitos específicos da sua aplicação.
+## ConclusÃ£o
+A Fluent API no EF Core oferece flexibilidade e controle sobre o mapeamento de entidades e seus relacionamentos. Utilize-a para configurar seu modelo de dados de acordo com os requisitos especÃ­ficos da sua aplicaÃ§Ã£o.
 
 ## Instalar o CLI do Entity Framework Core (EF Core CLI)
 
@@ -51,11 +51,11 @@ A Fluent API no EF Core oferece flexibilidade e controle sobre o mapeamento de e
 dotnet tool install --global dotnet-ef
 ```
 
-Este comando instala o CLI do EF Core globalmente em sua máquina.
+Este comando instala o CLI do EF Core globalmente em sua mÃ¡quina.
 
-## Criar uma Migração
+## Criar uma MigraÃ§Ã£o
 
-Para criar uma migração no Entity Framework Core, execute o seguinte comando no terminal ou console, especificando o projeto que contém o contexto do banco de dados e as migrações:
+Para criar uma migraÃ§Ã£o no Entity Framework Core, execute o seguinte comando no terminal ou console, especificando o projeto que contÃ©m o contexto do banco de dados e as migraÃ§Ãµes:
 
 Utilizaremos esta estrutura de comando
 `dotnet ef migrations add NomeDaMigracao --project Caminho/Para/Projeto --startup-project Caminho/Para/ProjetoDeInicializacao`
@@ -70,14 +70,14 @@ cd ./Foodway.Api
 dotnet ef migrations add InitialCreate --project ../Foodway.Infrastructure --startup-project .
 ```
 
-## Aplicando uma Migração
+## Aplicando uma MigraÃ§Ã£o
 `dotnet ef database update --project Caminho/Para/Projeto --startup-project Caminho/Para/ProjetoDeInicializacao`
 
 ### Importante!
-Após gerar uma nova Migration, sempre leia o que ela executara antes de Aplicar as Migrations
+ApÃ³s gerar uma nova Migration, sempre leia o que ela executara antes de Aplicar as Migrations
 
 ###
-Considerando que estamos no diretório do projeto Foodway.API
+Considerando que estamos no diretÃ³rio do projeto Foodway.API
 
 ```sh
 dotnet ef database update --project ../Foodway.Infrastructure --startup-project .
