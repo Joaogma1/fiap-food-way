@@ -13,13 +13,11 @@ namespace Foodway.Api.Controllers.V1;
 public class ClientsController : BaseApiController
 {
     private readonly IClientsService _clientsService;
-
     public ClientsController(IDomainNotification domainNotification, IClientsService clientsService) : base(
         domainNotification)
     {
         _clientsService = clientsService;
     }
-
     [HttpPost]
     public async Task<IActionResult> CreateClient([FromBody] CreateClientRequest request)
     {

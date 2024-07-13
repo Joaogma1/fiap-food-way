@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using Foodway.Config.Bootstrap;
 using Foodway.Config.Handlers;
@@ -22,7 +23,7 @@ public class Startup : IAppStartup
         IWebHostEnvironment environment)
     {
         services.AddDatabaseConfiguration(Configuration, environment);
-
+        services.AddMediator();
         services.AddCors(options =>
         {
             options.AddPolicy(CorsPolicy,

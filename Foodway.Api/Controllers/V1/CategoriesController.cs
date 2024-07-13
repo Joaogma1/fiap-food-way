@@ -19,7 +19,6 @@ public class CategoriesController : BaseApiController
     {
         _categoryService = categoryService;
     }
-
     [HttpPost]
     public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request)
     {

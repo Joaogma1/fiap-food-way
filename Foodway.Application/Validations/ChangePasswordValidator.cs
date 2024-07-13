@@ -10,7 +10,7 @@ public class ChangePasswordValidator : BaseValidator<ChangePasswordRequest>
         RuleFor(r => r.OldPassword)
             .NotEmpty()
             .WithMessage("Password is required");
-
+        
         RuleFor(r => r.NewPassword)
             .NotEmpty()
             .WithMessage("Password is required");
