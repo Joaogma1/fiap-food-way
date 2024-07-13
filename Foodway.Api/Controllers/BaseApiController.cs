@@ -1,5 +1,6 @@
 using Foodway.Shared.Notifications;
 using Foodway.Shared.Results;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Foodway.Api.Controllers;
@@ -7,10 +8,12 @@ namespace Foodway.Api.Controllers;
 public class BaseApiController : ControllerBase
 {
     private readonly IDomainNotification _domainNotification;
+    protected readonly IMediator Mediator;
 
-    public BaseApiController(IDomainNotification domainNotification)
+    public BaseApiController(IDomainNotification domainNotification, IMediator mediator)
     {
         _domainNotification = domainNotification;
+        Mediator = mediator;
     }
 
     [NonAction]

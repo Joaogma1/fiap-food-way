@@ -1,6 +1,7 @@
 ﻿using Foodway.Application.Contracts.Services;
 using Foodway.Domain.Requests.Category;
 using Foodway.Shared.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,11 @@ public class CategoriesController : BaseApiController
 {
     private readonly ICategoryService _categoryService;
 
-    public CategoriesController(IDomainNotification domainNotification, ICategoryService categoryService) : base(
-        domainNotification)
+    public CategoriesController(IDomainNotification domainNotification, IMediator mediator, ICategoryService categoryService) : base(
+        domainNotification,mediator)
     {
         _categoryService = categoryService;
+        
     }
     [HttpPost]
     public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request)

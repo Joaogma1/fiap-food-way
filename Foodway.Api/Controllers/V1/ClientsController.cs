@@ -1,6 +1,7 @@
 using Foodway.Application.Contracts.Services;
 using Foodway.Domain.Requests.Clients;
 using Foodway.Shared.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,8 +14,8 @@ namespace Foodway.Api.Controllers.V1;
 public class ClientsController : BaseApiController
 {
     private readonly IClientsService _clientsService;
-    public ClientsController(IDomainNotification domainNotification, IClientsService clientsService) : base(
-        domainNotification)
+    public ClientsController(IDomainNotification domainNotification, IMediator mediator, IClientsService clientsService) : base(
+        domainNotification,mediator)
     {
         _clientsService = clientsService;
     }

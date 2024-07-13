@@ -1,7 +1,8 @@
 using FluentValidation;
 using FluentValidation.Results;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
-namespace Foodway.Application.Validations;
+namespace Foodway.Shared.Validations;
 
 public abstract class BaseValidator<T> : AbstractValidator<T>
 {

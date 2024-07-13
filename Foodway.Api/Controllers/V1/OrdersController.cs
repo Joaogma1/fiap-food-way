@@ -2,6 +2,7 @@ using Foodway.Application.Contracts.Services;
 using Foodway.Domain.QueryFilters;
 using Foodway.Domain.Requests.Order;
 using Foodway.Shared.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,8 @@ public class OrdersController : BaseApiController
 {
     private readonly IOrderService _orderService;
 
-    public OrdersController(IDomainNotification domainNotification, IOrderService orderService) : base(
-        domainNotification)
+    public OrdersController(IDomainNotification domainNotification,IMediator mediator, IOrderService orderService) : base(
+        domainNotification, mediator)
     {
         _orderService = orderService;
     }

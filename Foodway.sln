@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "05 - Infrastructure", "05 -
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foodway.Infrastructure", "Foodway.Infrastructure\Foodway.Infrastructure.csproj", "{8F20465A-E68F-4132-9D34-97DAAC88F478}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foodway.Application.UseCases", "Foodway.Application.UseCases\Foodway.Application.UseCases.csproj", "{5F78E998-76FF-4237-8A2A-297E6E124E76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{8F20465A-E68F-4132-9D34-97DAAC88F478}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F20465A-E68F-4132-9D34-97DAAC88F478}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F20465A-E68F-4132-9D34-97DAAC88F478}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F78E998-76FF-4237-8A2A-297E6E124E76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F78E998-76FF-4237-8A2A-297E6E124E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F78E998-76FF-4237-8A2A-297E6E124E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F78E998-76FF-4237-8A2A-297E6E124E76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,5 +75,6 @@ Global
 		{B7ED1349-C834-4622-8D07-EB4C7DC24B52} = {7154E6A2-92E7-4DCF-95D9-15F032613CCF}
 		{8B28E102-713D-4A2D-9CC6-6FC1640F4EBA} = {E8F9652A-EC8E-4BA0-A645-79E662F4112F}
 		{8F20465A-E68F-4132-9D34-97DAAC88F478} = {416A5E09-659A-4CBC-8BCB-D4E5695DC0DD}
+		{5F78E998-76FF-4237-8A2A-297E6E124E76} = {7154E6A2-92E7-4DCF-95D9-15F032613CCF}
 	EndGlobalSection
 EndGlobal

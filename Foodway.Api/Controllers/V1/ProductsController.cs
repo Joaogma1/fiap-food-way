@@ -2,6 +2,7 @@
 using Foodway.Domain.QueryFilters;
 using Foodway.Domain.Requests.Product;
 using Foodway.Shared.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +16,8 @@ public class ProductsController : BaseApiController
 {
     private readonly IProductService _productService;
 
-    public ProductsController(IDomainNotification domainNotification, IProductService productService) : base(
-        domainNotification)
+    public ProductsController(IDomainNotification domainNotification,IMediator mediator, IProductService productService) : base(
+        domainNotification,mediator)
     {
         _productService = productService;
     }

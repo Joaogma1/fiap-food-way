@@ -1,4 +1,7 @@
+using System.Reflection;
+using Foodway.Application.UseCases.Auth.Commands.SignInCommand;
 using Foodway.Config.Pipelines;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Foodway.Config.Bootstrap;
@@ -9,7 +12,8 @@ public static class MediatorConfig
     {
         services.AddMediatR(cfg =>
         {
-            cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+            cfg.RegisterServicesFromAssemblies(typeof(SignInCommandHandler).GetTypeInfo().Assembly);
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
             cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
         });
         

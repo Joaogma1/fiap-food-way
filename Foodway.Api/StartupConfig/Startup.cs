@@ -23,7 +23,6 @@ public class Startup : IAppStartup
         IWebHostEnvironment environment)
     {
         services.AddDatabaseConfiguration(Configuration, environment);
-        services.AddMediator();
         services.AddCors(options =>
         {
             options.AddPolicy(CorsPolicy,
@@ -42,6 +41,7 @@ public class Startup : IAppStartup
         services.AddHttpsRedirectionConfiguration(environment);
         services.AddIoCServices();
         services.AddCache();
+        services.AddMediator();
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment environment)

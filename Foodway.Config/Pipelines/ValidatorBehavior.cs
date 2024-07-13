@@ -27,19 +27,17 @@ public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(next);
-        
             var context = new ValidationContext<TRequest>(request);
-
+            
             var validationResults = await Task.WhenAll(
                 _validators.Select(v =>
-                    v.ValidateAsync(context, cancellationToken))).ConfigureAwait(false);
+                    v.ValidateAsync(context, cancellationToken)));
 
             var failures = validationResults
                 .Where(r => r.Errors.Count > 0)
                 .SelectMany(r => r.Errors)
                 .ToList();
         
-        return failures.Count != 0 ? await Notify(failures) :await next().ConfigureAwait(false);
+        return failures.Count != 0 ? await Notify(failures) :await next();
     }
 }

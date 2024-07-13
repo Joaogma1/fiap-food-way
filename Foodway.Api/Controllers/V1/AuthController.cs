@@ -1,5 +1,7 @@
+using Foodway.Application.UseCases.Auth.Commands.SignInCommand;
 using Foodway.Domain.Requests.Auth;
 using Foodway.Shared.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +17,9 @@ namespace Foodway.Api.Controllers.V1;
 [AllowAnonymous]
 public class AuthController : BaseApiController
 {
-    public AuthController(IDomainNotification domainNotification) : base(domainNotification)
+    public AuthController(IDomainNotification domainNotification, IMediator mediator) : base(domainNotification, mediator)
     {
     }
-
     /// <summary>
     ///     Initiates the sign-in process for a user.
     /// </summary>
@@ -28,9 +29,9 @@ public class AuthController : BaseApiController
     ///     process.
     /// </returns>
     [HttpPost("/login")]
-    public async Task<IActionResult> SignIn([FromBody] SignInRequest request)
+    public async Task<IActionResult> SignIn([FromBody] SignInCommand request)
     {
-        return CreateResponse("success");
+        return CreateResponse(await Mediator.Send(request,CancellationToken.None));
     }
 
     /// <summary>
@@ -55,4 +56,6 @@ public class AuthController : BaseApiController
     {
         return NoContentResponse();
     }
+
+
 }
