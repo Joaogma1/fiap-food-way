@@ -1,6 +1,6 @@
 using Foodway.Shared.Notifications;
 
-namespace Foodway.Application.UseCases.Auth.Commands;
+namespace Foodway.Application.UseCases;
 
 public class BaseCommandHandler
 {

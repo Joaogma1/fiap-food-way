@@ -1,4 +1,5 @@
 using Foodway.Application.Contracts.Services;
+using Foodway.Application.UseCases.Client.Commands.CreateClientCommand;
 using Foodway.Domain.Requests.Clients;
 using Foodway.Shared.Notifications;
 using MediatR;
@@ -20,9 +21,9 @@ public class ClientsController : BaseApiController
         _clientsService = clientsService;
     }
     [HttpPost]
-    public async Task<IActionResult> CreateClient([FromBody] CreateClientRequest request)
+    public async Task<IActionResult> CreateClient([FromBody] CreateClientCommand request)
     {
-        return CreatedResponse(await _clientsService.CreateAsync(request));
+        return CreateResponse(await Mediator.Send(request, CancellationToken.None));
     }
 
     [HttpGet("{cpf}")]
