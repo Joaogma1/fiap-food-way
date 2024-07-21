@@ -1,13 +1,4 @@
-# FIAP-TechChallenge 1
-Documentos referentes ao Tech Challenge
-
-Tech Challenge - Etapa 1
-
-## Entregável 1
- - Documentação do sistema (DDD) com Event Storming, incluindo todos os passos/tipos de diagrama mostrados na aula 6 do módulo de DDD, e utilizando a linguagem ubíqua, dos seguintes fluxos:
- - Realização do pedido e pagamento;
- - Preparação e entrega do pedido.
-* É importante que os desenhos sigam os padrões utilizados na explicação.
+# Fiap-food-way
 
 ## Requisitos de Sistema
 
@@ -20,7 +11,7 @@ Certifique-se de que você tenha as seguintes ferramentas instaladas no seu sist
 Ou
 - Docker
 
-## Rodando a aplicação no Docker 
+## Rodando a aplicação no Docker
 Utilize o **_docker compose_** na pasta root do Projeto:
 
 ```sh
@@ -34,75 +25,136 @@ Ou
 
 [Clique Aqui !](http://localhost:8080/swagger/index.html)
 
-# Linguagem Ubiqua
 
-## Atores:
- - Cliente:
-   - A pessoa que vai até a interface realiza pedido, faz o pagamento e faz a retirada do pedido. Pode fazer cadastro e acompanha status do pedido
+## Rodando a aplicação em um cluster K8s
 
- - Cozinha/ Administrativo:
-   - Pessoa(s) que realiza o cadastro dos produtos, categorias, acompanha pedido, visualiza lista de clientes, realiza campanha promocional, executa o pedido, dá baixa no pedido, atualiza o status.
+Certifique-se que o kubernetes esteja instalando em sua máquina.
 
- - Sistema de Autoatendimento:
-   - Recebe cadastro de cliente, recebe input de pedido, processa pedido (pagamento -> com sistema externo), envia pedido para a cozinha, apresenta status do pedido.
+- [Kubernetes](https://kubernetes.io/releases/download/)
 
-## Objetos de Trabalho
-  - Tótem ou interface gráfica de autoatendimento;
-  - Menu de produtos;
-  - Gerador de QRCode;
-  - Relatório de clientes cadastrados;
-  - Disparador de e-mail;
-  - Selecionador de produtos;
-  - Botão para alterar status;
-  - Linha de tempo do status;
-  - Ticket do pedido;
-  - Pedido em si;
----
-# Event Storming - Eventos:
+> Sempre que atualizar a aplicação lembre-se de gerar uma nova build do docker e recriar o `kubeclt apply -f ./k8s/fiapfoodway-api-deployment.yml`
 
-## Cliente:
-  - Cliente escolheu produtos (colocou no carrinho de compras)
-  - Cliente realizou o cadastro (CPF, nome e e-mail e são opcionais) 
-  - Cliente finalizou o pedido (fechou o carrinho de compras)
-  - Sistema gerou QRCode de pagamento 
-  - Cliente realizou o pagamento
-  - Cliente retirou ticket do pedido
-  - Cliente retirou o pedido
-  
-## Sistema de autoatendimento (Gerenciador de pedido)
-  - Aguardou resposta do Gateway de pagamento
-  - Enviou o pedido para a cozinha
-  - Solicitou novo pagamento (caso de falha do gateway)
-  - Recebeu atualização de status
-  - Apresentou atualização de status
-  - Gerou tempo estimado do pedido
-  - Gerou ticket do pedido
-  
-## Administrativo:
-  - Deu baixa no pedido no sistema de autoatendimento
-  - Cadastrou produto
-  - Editou produto
-  - Removeu produto
-  - Alterou status do pedido
-  - Listou clientes cadastrados
-  - Disparou campanha promocional
+### Utilizando minikube
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Documentação / Fluxos
- - Para Acessar a documentação completa:
-   https://excalidraw.com/#room=bb1e2ff6f5c2be64c13c,1WxrLMV1WOehFQ93xijfkQ
- - Caso o link acima não funcione mais, abaixo seguem as imagens contendo o caminho trilhado 
+Primeiro certifique-se que o `minikube` esteja instalado em sua máquina.
 
-![0 - Eventos](https://github.com/ralecsander/FIAP-TechChallenge1/assets/98660528/e3f85a6f-1b9a-402a-b5d7-a7b4e0d7b0fc)
-![1 - Eventos e Pivotais](https://github.com/ralecsander/FIAP-TechChallenge1/assets/98660528/115793af-1cd2-4c27-9462-375c13325613)
-![2 - PA](https://github.com/ralecsander/FIAP-TechChallenge1/assets/98660528/f33b8914-d20d-49cc-810c-f199d7fb076b)
-![3 - Politicas e Comandos2](https://github.com/ralecsander/FIAP-TechChallenge1/assets/98660528/968cd8c7-ba27-48d2-a0f7-f6c7ab780167)
-![4 - Modelos de Leitura e Sistemas Externos](https://github.com/ralecsander/FIAP-TechChallenge1/assets/98660528/deea28d6-4a7b-4213-bba1-5509c9f55f9a)
-![5 - Contexto Delimitado](https://github.com/ralecsander/FIAP-TechChallenge1/assets/98660528/5ada7034-12bb-4076-9d1b-3933d349cb85)
-![6 - Diagrama de Classes](https://github.com/ralecsander/FIAP-TechChallenge1/assets/98660528/ec59fcee-311a-4b50-85a5-17f5b0a39f9a)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Fx86-64%2Fstable%2Fbinary+download)
 
+Siga o passo a passo a seguir para rodar o minikube e o cluster k8s dessa aplicação:
 
+1. "Ligue" o minikube
 
+```bash
+minikube start
+```
 
+2. "Builde" a aplicação
 
+```bash
+docker build -t fiapfoodway/api:latest .
+```
 
+3. Certifique-se que o minikube pode "ver" suas imagens de docker local:
+
+```bash
+eval $(minikube -p minikube docker-env)
+```
+
+4. Crie os recursos:
+
+Pode cria-los utilizando o `tools/build-k8s.sh`
+```bash
+bash ./tools/build-k8s.sh
+```
+
+ou
+
+```bash
+kubectl apply -f ./k8s/configmaps/db-config.yml
+kubectl apply -f ./k8s/volumes/postgres-pvc.yml
+kubectl apply -f ./k8s/database-deployment.yml
+kubectl apply -f ./k8s/services/postgres-service.yml
+kubectl apply -f ./k8s/fiapfoodway-api-deployment.yml
+kubectl apply -f ./k8s/services/api-service.yml
+kubectl apply -f ./k8s/hpa/hpa-api.yml
+kubectl apply -f ./k8s/hpa/hpa-postgres.yml
+kubectl apply -f ./k8s/crons/scale-up-cronjob.yml
+kubectl apply -f ./k8s/crons/scale-down-cronjob.yml
+```
+
+5. Certifique-se que os pods estão rodando corretamente:
+
+```bash
+kubectl get pods
+```
+
+6. No mesmo terminal rode libere as portas para o load balancer
+
+```bash
+minikube tunnel
+```
+
+Em caso de sucesso o terminal irá expor o seguinte:
+
+```bash
+✅  Tunnel successfully started
+
+📌  NOTE: Please do not close this terminal as this process must stay alive for the tunnel to be accessible ...
+
+🏃  Starting tunnel for service fiapfoodway
+```
+
+> Mantenha o terminal aberto para manter a aplicação com o tunnel aberto para o load balancer
+
+7. Abra um segundo terminal e digite
+
+```bash
+minikube service fiapfoodway --url
+```
+
+O terminal irá expor algo do tipo:
+```bash
+minikube service fiapfoodway --url
+http://127.0.0.1:62511
+❗  Because you are using a Docker driver on darwin, the terminal needs to be open to run it.
+```
+
+Essa url é a url atual da aplicação
+
+> Mantenha o terminal aberto para manter a url exposta para a API
+
+Teste a url: `{--url}/swagger/index.html`
+
+### Troubleshooting
+
+Lembre-se de primeiramente checar os logs:
+
+```bash
+kubectl logs deployments/api
+ou
+kubectl logs deployments/potegres
+```
+
+#### CrashLoop por falha de migration
+
+Em caso de falha com a migration, libere o volume para re-criar o banco de dados:
+
+```bash
+kubectl delete pvc postgres-pvc
+```
+
+```bash
+kubectl apply -f ./k8s/volumes/postgres-pvc.yml
+kubectl apply -f ./k8s/database-deployment.yml
+kubectl apply -f ./k8s/services/postgres-service.yml
+```
+
+#### Hard refresh
+
+Se tudo falhar, tente deletar tudo e começar novamente
+
+```bash
+bash ./tools/terminate-k8s.sh
+```
+
+E reconstrua novamente tentando identificar onde esta a falha

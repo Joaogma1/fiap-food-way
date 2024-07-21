@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: scale-up
+spec:
+  schedule: "0 21 * * *" # 6 PM Sao Paulo time (UTC-3)
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: scale-up
+            image: bitnami/kubectl:latest
+            command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl scale deployment api --replicas=5
+              kubectl scale deployment postgres --replicas=3
+          restartPolicy: OnFailure

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: fiapfoodway/api:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ConnectionStrings__DefaultConnection
+          value: "User ID=postgres;Password=docker;Host=postgres;Port=5432;Database=foodway;Pooling=false;"
+        - name: ASPNETCORE_HTTP_PORTS
+          value: "8080"
+        - name: JWT__ValidAudience
+          value: "https://localhost:7120"
+        - name: JWT__ValidIssuer
+          value: "http://localhost:5124"
+        - name: JWT__Secret
+          value: "JWTAuthenticationHIGHsecuredPassword@StrongPass132r"
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20
