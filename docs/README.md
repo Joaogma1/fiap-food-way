@@ -71,7 +71,7 @@ ou
 
 ```bash
 kubectl apply -f ./k8s/configmaps/db-config.yml
-kubectl apply -f ./k8s/volumes/postgres-pvc.yml
+kubectl apply -f ./k8s/volumes/db-pvc.yml
 kubectl apply -f ./k8s/database-deployment.yml
 kubectl apply -f ./k8s/services/postgres-service.yml
 kubectl apply -f ./k8s/fiapfoodway-api-deployment.yml
@@ -140,11 +140,11 @@ kubectl logs deployments/potegres
 Em caso de falha com a migration, libere o volume para re-criar o banco de dados:
 
 ```bash
-kubectl delete pvc postgres-pvc
+kubectl delete pvc db-pvc
 ```
 
 ```bash
-kubectl apply -f ./k8s/volumes/postgres-pvc.yml
+kubectl apply -f ./k8s/volumes/db-pvc.yml
 kubectl apply -f ./k8s/database-deployment.yml
 kubectl apply -f ./k8s/services/postgres-service.yml
 ```

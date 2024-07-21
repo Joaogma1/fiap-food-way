@@ -13,10 +13,10 @@ if [[ "$response" =~ ^[Yy]$ ]]; then
     kubectl delete service fiapfoodway postgres
 
     # Delete persistent volume claims
-    kubectl delete pvc postgres-pvc
+    kubectl delete pvc db-pvc
 
     # Optionally delete Horizontal Pod Autoscalers if they are used
-    kubectl delete hpa api-hpa postgres-hpa
+    kubectl delete hpa api-hpa db-hpa
 
     # Delete CronJobs
     kubectl delete cronjob scale-up scale-down
