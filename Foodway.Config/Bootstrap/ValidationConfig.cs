@@ -1,6 +1,7 @@
 using FluentValidation;
 using Foodway.Application.UseCases.Auth.Commands.SignInCommand;
 using Foodway.Application.UseCases.Client.Commands.CreateClientCommand;
+using Foodway.Application.UseCases.Product.Commands.CreateProductCommand;
 using Foodway.Application.Validations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +22,7 @@ public static class ValidationConfig
         services.AddValidatorsFromAssemblyContaining<CreateCategoryRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<SignInCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<CreateClientCommandValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateProductCommandValidator>();
         
         return services;
     }
