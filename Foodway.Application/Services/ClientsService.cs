@@ -12,25 +12,14 @@ namespace Foodway.Application.Services;
 public class ClientsService : BaseService, IClientsService
 {
     private readonly IClientsRepository _clientsRepository;
-    private readonly IValidator<CreateClientRequest> _createClientValidator;
 
-    public ClientsService(IDomainNotification notifications, IClientsRepository clientsRepository,
-        IValidator<CreateClientRequest> createClientValidator) : base(notifications)
+    public ClientsService(IDomainNotification notifications, IClientsRepository clientsRepository) : base(notifications)
     {
         _clientsRepository = clientsRepository;
-        _createClientValidator = createClientValidator;
     }
 
     public async Task<string> CreateAsync(CreateClientRequest req)
     {
-        var reqValidation = await _createClientValidator.ValidateAsync(req);
-
-        if (!reqValidation.IsValid)
-        {
-            HandleValidationErrors(reqValidation);
-            return "";
-        }
-
         if (await _clientsRepository.AnyAsync(x => x.CPF == req.CPF))
         {
             Notifications.Handle("Client", $"{req.CPF} does already exists");

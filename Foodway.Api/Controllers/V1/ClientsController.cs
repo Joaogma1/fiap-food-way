@@ -20,6 +20,7 @@ public class ClientsController : BaseApiController
     {
         _clientsService = clientsService;
     }
+
     [HttpPost]
     public async Task<IActionResult> CreateClient([FromBody] CreateClientCommand request)
     {

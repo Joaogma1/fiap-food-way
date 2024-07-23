@@ -40,7 +40,7 @@ public class OrdersController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateOrderCommand req)
     {
-        return CreatedResponse(await Mediator.Send(req, CancellationToken.None));
+        return CreateResponse(await Mediator.Send(req, CancellationToken.None));
     }
 
     [HttpPatch("status/{orderId}")]

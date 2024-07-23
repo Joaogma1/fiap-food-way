@@ -7,10 +7,13 @@ public class CreateOrderCommandValidator : BaseValidator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator()
     {
-        RuleFor(item => item.ProductId)
+        RuleForEach(order => order.Items)
             .NotEmpty();
 
-        RuleFor(item => item.Quantity)
-            .GreaterThan(0);
+        RuleForEach(x => x.Items).ChildRules(order =>
+        {
+            order.RuleFor(x => x.Quantity).GreaterThan(0);
+            order.RuleFor(x => x.ProductId).NotEmpty();
+        });
     }
 }

@@ -41,7 +41,7 @@ public class ProductsController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateProductCommand req)
     {
-        return CreatedResponse(await Mediator.Send(req, CancellationToken.None));
+        return CreateResponse(await Mediator.Send(req, CancellationToken.None));
     }
 
     [HttpPut("{id}")]

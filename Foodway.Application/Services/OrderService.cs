@@ -18,14 +18,11 @@ public class OrderService : BaseService, IOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
-    private readonly IValidator<CreateOrdersRequest> createOrderReqValidator;
 
     public OrderService(IDomainNotification notifications, IOrderRepository orderRepository,
-        IValidator<CreateOrdersRequest> createOrderReqValidator,
         IProductRepository productRepository) : base(notifications)
     {
         _orderRepository = orderRepository;
-        this.createOrderReqValidator = createOrderReqValidator;
         _productRepository = productRepository;
     }
 
@@ -62,11 +59,7 @@ public class OrderService : BaseService, IOrderService
     }
 
     public async Task<string?> CreateAsync(CreateOrdersRequest req)
-    {
-        var validationResult = await createOrderReqValidator.ValidateAsync(req);
-
-        if (!validationResult.IsValid) HandleValidationErrors(validationResult);
-
+    { 
         var order = await _orderRepository.AddAsync(new Order
         {
             ClientId = req.ClientId,
