@@ -1,6 +1,7 @@
 using Foodway.Application.Contracts.Services;
 using Foodway.Domain.QueryFilters;
 using Foodway.Domain.Requests.Order;
+using Foodway.Application.UseCases.Order.Commands.CreateOrderCommand;
 using Foodway.Shared.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -37,9 +38,9 @@ public class OrdersController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateOrdersRequest req)
+    public async Task<IActionResult> Post([FromBody] CreateOrderCommand req)
     {
-        return CreatedResponse(await _orderService.CreateAsync(req));
+        return CreatedResponse(await Mediator.Send(req, CancellationToken.None));
     }
 
     [HttpPatch("status/{orderId}")]
