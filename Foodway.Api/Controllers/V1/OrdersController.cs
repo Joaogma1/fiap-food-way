@@ -29,6 +29,13 @@ public class OrdersController : BaseApiController
         return CreateResponse(await _orderService.GetPagedAsync(filter));
     }
 
+    [HttpGet("all-filtered")]
+    public async Task<IActionResult> GetAllFiltered(int pageIndex = 1, int pageSize = 10, int? lastOrderId = null)
+    {
+        var orders = await _orderService.GetAllFilteredOrdersAsync(pageIndex, pageSize, lastOrderId);
+        return CreateResponse(orders);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
