@@ -1,6 +1,7 @@
 ﻿using Foodway.Application.Contracts.Services;
 using Foodway.Domain.QueryFilters;
 using Foodway.Domain.Requests.Product;
+using Foodway.Application.UseCases.Product.Commands.CreateProductCommand;
 using Foodway.Shared.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -38,9 +39,9 @@ public class ProductsController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateProductRequest req)
+    public async Task<IActionResult> Post([FromBody] CreateProductCommand req)
     {
-        return CreatedResponse(await _productService.CreateAsync(req));
+        return CreateResponse(await Mediator.Send(req, CancellationToken.None));
     }
 
     [HttpPut("{id}")]

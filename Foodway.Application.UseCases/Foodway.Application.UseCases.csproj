@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Foodway.Application\Foodway.Application.csproj" />
       <ProjectReference Include="..\Foodway.Shared\Foodway.Shared.csproj" />
     </ItemGroup>
 

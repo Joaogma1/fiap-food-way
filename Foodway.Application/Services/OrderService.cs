@@ -11,6 +11,7 @@ using Foodway.Shared.Enums;
 using Foodway.Shared.Helpers;
 using Foodway.Shared.Notifications;
 using Foodway.Shared.Pagination;
+using Microsoft.EntityFrameworkCore;
 
 namespace Foodway.Application.Services;
 
@@ -18,14 +19,11 @@ public class OrderService : BaseService, IOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IProductRepository _productRepository;
-    private readonly IValidator<CreateOrdersRequest> createOrderReqValidator;
 
     public OrderService(IDomainNotification notifications, IOrderRepository orderRepository,
-        IValidator<CreateOrdersRequest> createOrderReqValidator,
         IProductRepository productRepository) : base(notifications)
     {
         _orderRepository = orderRepository;
-        this.createOrderReqValidator = createOrderReqValidator;
         _productRepository = productRepository;
     }
 
@@ -48,6 +46,38 @@ public class OrderService : BaseService, IOrderService
         return new PagedList<OrderViewModel>(items, total, filter.PageSize);
     }
 
+    public async Task<PagedList<OrderViewModel>> GetAllFilteredOrdersAsync(int pageIndex, int pageSize, int? lastOrderId = null)
+    {
+        if (pageIndex < 1) pageIndex = 1;
+        if (pageSize < 1) pageSize = 1;
+
+        var joins = new IncludeHelper<Order>()
+            .Include(x => x.Client)
+            .Include(x => x.OrderItems)
+            .Include(x => x.OrderItems.Select(y => y.Product))
+            .Include(x => x.OrderItems.Select(y => y.Product.Stock))
+            .Include(x => x.OrderItems.Select(y => y.Product.Category))
+            .Includes;
+
+        var query = _orderRepository.ListAsNoTracking().AsQueryable();
+
+        query = query.Where(o => o.OrderStatus != OrderStatus.Done && o.OrderStatus != OrderStatus.Cancelled);
+
+        query = query.OrderBy(o => o.OrderStatus == OrderStatus.ReadyForPickUp ? 1 :
+                                     o.OrderStatus == OrderStatus.Preparing ? 2 :
+                                      o.OrderStatus == OrderStatus.WaitingApproval ? 3 : 4)
+                     .ThenBy(o => o.CreatedAt);
+
+        var total = await query.CountAsync();
+        var paginatedOrders = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+
+        var items = paginatedOrders.ToViewModel().ToList();
+
+        return new PagedList<OrderViewModel>(items, total, pageSize);
+    }
+
+
+
     public async Task<OrderViewModel> GetByIdAsync(Guid id)
     {
         var joins = new IncludeHelper<Order>()
@@ -62,11 +92,7 @@ public class OrderService : BaseService, IOrderService
     }
 
     public async Task<string?> CreateAsync(CreateOrdersRequest req)
-    {
-        var validationResult = await createOrderReqValidator.ValidateAsync(req);
-
-        if (!validationResult.IsValid) HandleValidationErrors(validationResult);
-
+    { 
         var order = await _orderRepository.AddAsync(new Order
         {
             ClientId = req.ClientId,

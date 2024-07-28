@@ -15,30 +15,18 @@ namespace Foodway.Application.Services;
 public class ProductService : BaseService, IProductService
 {
     private readonly ICategoryRepository _categoryRepository;
-    private readonly IValidator<CreateProductRequest> _createProductValidator;
     private readonly IProductRepository _productRepository;
-    private readonly IValidator<UpdateProductRequest> _updateProductValidator;
 
     public ProductService(IDomainNotification notifications, IProductRepository productRepository,
-        IValidator<CreateProductRequest> createProductValidator,
-        IValidator<UpdateProductRequest> updateProductValidator,
         ICategoryRepository categoryRepository) : base(notifications)
     {
         _productRepository = productRepository;
-        _createProductValidator = createProductValidator;
-        _updateProductValidator = updateProductValidator;
+
         _categoryRepository = categoryRepository;
     }
 
     public async Task<string> CreateAsync(CreateProductRequest req)
     {
-        var reqValidation = await _createProductValidator.ValidateAsync(req);
-
-        if (!reqValidation.IsValid)
-        {
-            HandleValidationErrors(reqValidation);
-            return "";
-        }
 
         if (!await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId))
         {
@@ -103,14 +91,6 @@ public class ProductService : BaseService, IProductService
 
     public async Task<string> UpdateAsync(UpdateProductRequest req)
     {
-        var reqValidation = await _updateProductValidator.ValidateAsync(req);
-
-        if (!reqValidation.IsValid)
-        {
-            HandleValidationErrors(reqValidation);
-            return "";
-        }
-
         if (!await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId))
         {
             Notifications.Handle("Category", $"{req.CategoryId} does not exists");

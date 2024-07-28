@@ -8,4 +8,5 @@ namespace Foodway.Domain.Contracts.Repositories;
 public interface IOrderRepository : IRepository<Order>
 {
     Expression<Func<Order, bool>> Where(OrdersFilter filter);
+    Expression<Func<Order, bool>>? Where(Func<object, bool> value);
 }

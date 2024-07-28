@@ -35,4 +35,9 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 
         return predicate;
     }
+
+    public Expression<Func<Order, bool>>? Where(Func<object, bool> value)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using Foodway.Application.Contracts.Services;
+using Foodway.Application.UseCases.Category.Commands.CreateCategoryCommand;
 using Foodway.Domain.Requests.Category;
 using Foodway.Shared.Notifications;
 using MediatR;
@@ -22,9 +23,9 @@ public class CategoriesController : BaseApiController
         
     }
     [HttpPost]
-    public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request)
+    public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryCommand request)
     {
-        return CreatedResponse(await _categoryService.CreateAsync(request));
+        return CreateResponse(await Mediator.Send(request, CancellationToken.None));
     }
 
     [HttpGet]
