@@ -27,10 +27,23 @@ public static class DataBaseConfig
     public static IApplicationBuilder AppUseMigrations(this IApplicationBuilder app)
     {
         using var serviceScope = app.ApplicationServices.CreateScope();
-
         var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
 
-        if (context != null && context.Database.GetPendingMigrations().Any()) context.Database.Migrate();
+        if (context != null)
+        {
+            try
+            {
+                if (context.Database.GetPendingMigrations().Any())
+                {
+                    context.Database.Migrate();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error during migration: " + ex.Message);
+                Console.WriteLine("Stack Trace: " + ex.StackTrace);
+            }
+        }
         return app;
     }
 }

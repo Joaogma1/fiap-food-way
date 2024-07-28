@@ -6,6 +6,7 @@ COPY Foodway.sln ./
 COPY Foodway.Api/Foodway.Api.csproj Foodway.Api/
 COPY Foodway.Config/Foodway.Config.csproj Foodway.Config/
 COPY Foodway.Application/Foodway.Application.csproj Foodway.Application/
+COPY Foodway.Application.UseCases/Foodway.Application.UseCases.csproj Foodway.Application.UseCases/
 COPY Foodway.Domain/Foodway.Domain.csproj Foodway.Domain/
 COPY Foodway.Infrastructure/Foodway.Infrastructure.csproj Foodway.Infrastructure/
 COPY Foodway.Shared/Foodway.Shared.csproj Foodway.Shared/

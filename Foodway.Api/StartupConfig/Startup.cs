@@ -37,6 +37,8 @@ public class Startup : IAppStartup
             options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
 
+        services.AddHealthChecks();
+
         services.AddApiDocsConfiguration();
         services.AddHttpsRedirectionConfiguration(environment);
         services.AddIoCServices();
@@ -52,6 +54,8 @@ public class Startup : IAppStartup
         app.UseCustomHttpsRedirection();
         app.ConfigureExceptionHandler();
         app.MapControllers();
+
+        app.MapHealthChecks("/healthz");
 
         app.AppUseMigrations();
 
