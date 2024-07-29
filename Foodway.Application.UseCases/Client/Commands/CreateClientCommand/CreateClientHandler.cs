@@ -5,18 +5,18 @@ using MediatR;
 
 namespace Foodway.Application.UseCases.Client.Commands.CreateClientCommand;
 
-public class CreateClientCommandHandler : BaseCommandHandler, IRequestHandler<CreateClientCommand,string>
+public class CreateClientHandler : BaseHandler, IRequestHandler<CreateClientCommand, string>
 {
-
     private readonly IClientsService _clientsService;
 
-    public CreateClientCommandHandler(IDomainNotification notifications, IClientsService clientsService) : base(notifications)
+    public CreateClientHandler(IDomainNotification notifications, IClientsService clientsService) : base(notifications)
     {
         _clientsService = clientsService;
     }
 
     public async Task<string> Handle(CreateClientCommand request, CancellationToken cancellationToken)
     {
-        return await _clientsService.CreateAsync(new CreateClientRequest() { CPF = request.CPF, Email = request.Email, Name = request.Name });
+        return await _clientsService.CreateAsync(new CreateClientRequest()
+            { CPF = request.CPF, Email = request.Email, Name = request.Name });
     }
 }

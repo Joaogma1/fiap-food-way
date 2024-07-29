@@ -8,15 +8,15 @@ public class CreateProductCommandValidator : BaseValidator<CreateProductCommand>
     public CreateProductCommandValidator()
     {
         RuleFor(x => x.Name)
-			.NotEmpty();
-        
+            .NotEmpty();
+
         RuleFor(x => x.Price)
             .NotEmpty()
             .GreaterThan(0);
-        
+
         RuleFor(x => x.Description)
             .NotEmpty();
-        
+
         RuleFor(x => x.CategoryId)
             .NotEmpty()
             .GreaterThan(0);

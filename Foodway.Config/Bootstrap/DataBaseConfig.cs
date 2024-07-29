@@ -30,20 +30,16 @@ public static class DataBaseConfig
         var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
 
         if (context != null)
-        {
             try
             {
-                if (context.Database.GetPendingMigrations().Any())
-                {
-                    context.Database.Migrate();
-                }
+                if (context.Database.GetPendingMigrations().Any()) context.Database.Migrate();
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error during migration: " + ex.Message);
                 Console.WriteLine("Stack Trace: " + ex.StackTrace);
             }
-        }
+
         return app;
     }
 }

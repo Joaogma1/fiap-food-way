@@ -17,9 +17,11 @@ namespace Foodway.Api.Controllers.V1;
 [AllowAnonymous]
 public class AuthController : BaseApiController
 {
-    public AuthController(IDomainNotification domainNotification, IMediator mediator) : base(domainNotification, mediator)
+    public AuthController(IDomainNotification domainNotification, IMediator mediator) : base(domainNotification,
+        mediator)
     {
     }
+
     /// <summary>
     ///     Initiates the sign-in process for a user.
     /// </summary>
@@ -31,7 +33,7 @@ public class AuthController : BaseApiController
     [HttpPost("/login")]
     public async Task<IActionResult> SignIn([FromBody] SignInCommand request)
     {
-        return CreateResponse(await Mediator.Send(request,CancellationToken.None));
+        return CreateResponse(await Mediator.Send(request, CancellationToken.None));
     }
 
     /// <summary>
@@ -56,6 +58,4 @@ public class AuthController : BaseApiController
     {
         return NoContentResponse();
     }
-
-
 }

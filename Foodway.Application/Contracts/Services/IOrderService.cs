@@ -11,5 +11,5 @@ public interface IOrderService
     Task<OrderViewModel> GetByIdAsync(Guid id);
     Task<string?> CreateAsync(CreateOrdersRequest req);
     Task<bool> UpdateOrderStatusAsync(UpdateOrderStatusRequest req);
-    Task<PagedList<OrderViewModel>> GetAllFilteredOrdersAsync(int pageIndex, int pageSize, int? lastOrderId = null);
+    Task<PagedList<OrderViewModel>> GetAllFilteredOrdersAsync(Pagination pagination, int? lastOrderId = null);
 }

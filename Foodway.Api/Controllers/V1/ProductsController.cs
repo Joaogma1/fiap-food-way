@@ -1,7 +1,9 @@
-﻿using Foodway.Application.Contracts.Services;
-using Foodway.Domain.QueryFilters;
-using Foodway.Domain.Requests.Product;
+﻿using Foodway.Domain.QueryFilters;
 using Foodway.Application.UseCases.Product.Commands.CreateProductCommand;
+using Foodway.Application.UseCases.Product.Commands.DeleteProductCommand;
+using Foodway.Application.UseCases.Product.Commands.UpdateProductCommand;
+using Foodway.Application.UseCases.Product.Queries.GetProductByIdQuery;
+using Foodway.Application.UseCases.Product.Queries.ListAllProductsPaginatedQuery;
 using Foodway.Shared.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,24 +17,22 @@ namespace Foodway.Api.Controllers.V1;
 [AllowAnonymous]
 public class ProductsController : BaseApiController
 {
-    private readonly IProductService _productService;
-
-    public ProductsController(IDomainNotification domainNotification,IMediator mediator, IProductService productService) : base(
-        domainNotification,mediator)
+    public ProductsController(IDomainNotification
+        domainNotification, IMediator mediator) : base(
+        domainNotification, mediator)
     {
-        _productService = productService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] ProductFilter filter)
     {
-        return CreateResponse(await _productService.getPagedAsync(filter));
+        return CreateResponse(await Mediator.Send(new ListAllProductsPaginatedQuery(filter)));
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var result = await _productService.GetByIdAsync(id);
+        var result = await Mediator.Send(new GetProductByIdQuery(id));
         if (result is null) return NotFoundResponse();
 
         return CreateResponse(result);
@@ -45,19 +45,18 @@ public class ProductsController : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(Guid? id, [FromBody] UpdateProductRequest req)
+    public async Task<IActionResult> Put([FromQuery] Guid id, [FromBody] UpsertProductCommand req)
     {
         req.Id = id;
-        var result = await _productService.UpdateAsync(req);
-        if (id == null) return CreatedResponse(result);
-
+        var result = await Mediator.Send(req);
+        if (string.IsNullOrEmpty(result)) return CreatedResponse(result);
         return NoContentResponse();
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var result = await _productService.DeleteAsync(id);
+        var result = await Mediator.Send(new DeleteProductCommand(id));
         if (result is false) return NotFoundResponse();
 
         return NoContent();

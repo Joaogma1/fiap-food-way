@@ -11,7 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Foodway.Application.UseCases\Foodway.Application.UseCases.csproj" />
+        <ProjectReference Include="..\Foodway.Application.UseCases\Foodway.Application.UseCases.csproj"/>
         <ProjectReference Include="..\Foodway.Application\Foodway.Application.csproj"/>
         <ProjectReference Include="..\Foodway.Infrastructure\Foodway.Infrastructure.csproj"/>
     </ItemGroup>

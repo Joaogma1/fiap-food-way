@@ -30,27 +30,25 @@ public class OrderService : BaseService, IOrderService
     public async Task<PagedList<OrderViewModel>> GetPagedAsync(OrdersFilter filter)
     {
         var joins = new IncludeHelper<Order>()
-            .Include(x => x.Client)
             .Include(x => x.OrderItems)
             .Include(x => x.OrderItems.Select(y => y.Product))
             .Include(x => x.OrderItems.Select(y => y.Product.Stock))
-            .Include(x => x.OrderItems.Select(y => y.Product.Category))
-            .Includes;
+            .Include(x => x.OrderItems.Select(y => y.Product.Category));
+
+        if (filter.ClientId is not null) joins.Include(x => x.Client);
 
         var where = _orderRepository.Where(filter);
         var total = await _orderRepository.CountAsync(where);
         var items = (await _orderRepository.ListAsNoTrackingAsync(
-            where, filter.PageIndex, filter.PageSize, includes: joins
+            where, filter.PageIndex, filter.PageSize, includes: joins.Includes
         )).ToViewModel().ToList();
 
         return new PagedList<OrderViewModel>(items, total, filter.PageSize);
     }
 
-    public async Task<PagedList<OrderViewModel>> GetAllFilteredOrdersAsync(int pageIndex, int pageSize, int? lastOrderId = null)
+    public async Task<PagedList<OrderViewModel>> GetAllFilteredOrdersAsync(Pagination pagination,
+        int? lastOrderId = null)
     {
-        if (pageIndex < 1) pageIndex = 1;
-        if (pageSize < 1) pageSize = 1;
-
         var joins = new IncludeHelper<Order>()
             .Include(x => x.Client)
             .Include(x => x.OrderItems)
@@ -64,19 +62,18 @@ public class OrderService : BaseService, IOrderService
         query = query.Where(o => o.OrderStatus != OrderStatus.Done && o.OrderStatus != OrderStatus.Cancelled);
 
         query = query.OrderBy(o => o.OrderStatus == OrderStatus.ReadyForPickUp ? 1 :
-                                     o.OrderStatus == OrderStatus.Preparing ? 2 :
-                                      o.OrderStatus == OrderStatus.WaitingApproval ? 3 : 4)
-                     .ThenBy(o => o.CreatedAt);
+                o.OrderStatus == OrderStatus.Preparing ? 2 :
+                o.OrderStatus == OrderStatus.WaitingApproval ? 3 : 4)
+            .ThenBy(o => o.CreatedAt);
 
         var total = await query.CountAsync();
-        var paginatedOrders = await query.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
+        var paginatedOrders = await query.Skip((pagination.PageIndex - 1) * pagination.PageSize)
+            .Take(pagination.PageSize).ToListAsync();
 
         var items = paginatedOrders.ToViewModel().ToList();
 
-        return new PagedList<OrderViewModel>(items, total, pageSize);
+        return new PagedList<OrderViewModel>(items, total, pagination.PageSize);
     }
-
-
 
     public async Task<OrderViewModel> GetByIdAsync(Guid id)
     {
@@ -92,7 +89,7 @@ public class OrderService : BaseService, IOrderService
     }
 
     public async Task<string?> CreateAsync(CreateOrdersRequest req)
-    { 
+    {
         var order = await _orderRepository.AddAsync(new Order
         {
             ClientId = req.ClientId,
@@ -160,6 +157,13 @@ public class OrderService : BaseService, IOrderService
     {
         var order = await _orderRepository.FindAsync(x => x.Id == req.OrderId);
         if (order is null) return false;
+
+        if (req.PaymentStatus > order.PaymentStatus)
+        {
+            order.PaymentStatus = req.PaymentStatus;
+            _orderRepository.Modify(order);
+            await _orderRepository.SaveChanges();
+        }
 
         if (order.PaymentStatus == PaymentStatus.Approved && req.OrderStatus > order.OrderStatus)
         {

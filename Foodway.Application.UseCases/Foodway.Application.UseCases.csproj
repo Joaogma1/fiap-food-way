@@ -5,18 +5,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-    
+
     <ItemGroup>
-        <PackageReference Include="MediatR" Version="12.3.0" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Auth\Queries\" />
+        <PackageReference Include="MediatR" Version="12.3.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Foodway.Application\Foodway.Application.csproj" />
-      <ProjectReference Include="..\Foodway.Shared\Foodway.Shared.csproj" />
+        <Folder Include="Auth\Queries\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Foodway.Application\Foodway.Application.csproj"/>
+        <ProjectReference Include="..\Foodway.Shared\Foodway.Shared.csproj"/>
     </ItemGroup>
 
 </Project>

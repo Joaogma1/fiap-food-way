@@ -1,5 +1,6 @@
 using Foodway.Application.Contracts.Services;
 using Foodway.Application.UseCases.Client.Commands.CreateClientCommand;
+using Foodway.Application.UseCases.Client.Queries.GetClientByCpfQuery;
 using Foodway.Domain.Requests.Clients;
 using Foodway.Shared.Notifications;
 using MediatR;
@@ -14,11 +15,9 @@ namespace Foodway.Api.Controllers.V1;
 [AllowAnonymous]
 public class ClientsController : BaseApiController
 {
-    private readonly IClientsService _clientsService;
-    public ClientsController(IDomainNotification domainNotification, IMediator mediator, IClientsService clientsService) : base(
-        domainNotification,mediator)
+    public ClientsController(IDomainNotification domainNotification, IMediator mediator) : base(
+        domainNotification, mediator)
     {
-        _clientsService = clientsService;
     }
 
     [HttpPost]
@@ -28,9 +27,9 @@ public class ClientsController : BaseApiController
     }
 
     [HttpGet("{cpf}")]
-    public async Task<IActionResult> GetClientByCPF(string cpf)
+    public async Task<IActionResult> GetClientByCpf(string cpf)
     {
-        var result = await _clientsService.GetByCPFAsync(cpf);
+        var result = await Mediator.Send(new GetClientByCpfQuery(cpf));
         if (result is null) return NotFoundResponse();
 
         return CreateResponse(result);

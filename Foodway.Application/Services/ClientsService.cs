@@ -38,7 +38,7 @@ public class ClientsService : BaseService, IClientsService
         return createdClient.Id.ToString();
     }
 
-    public async Task<ClientsViewModel?> GetByCPFAsync(string cpf)
+    public async Task<ClientsViewModel?> GetByCpfAsync(string cpf)
     {
         if (!await _clientsRepository.AnyAsync(x => x.CPF == cpf)) return null;
         return (await _clientsRepository.FindAsyncAsNoTracking(x => x.CPF == cpf)).ToViewModel();

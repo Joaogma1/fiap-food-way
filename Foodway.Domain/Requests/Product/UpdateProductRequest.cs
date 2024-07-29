@@ -4,5 +4,5 @@ namespace Foodway.Domain.Requests.Product;
 
 public class UpdateProductRequest : CreateProductRequest
 {
-    [JsonIgnore] public Guid? Id { get; set; }
+    public Guid? Id { get; set; }
 }

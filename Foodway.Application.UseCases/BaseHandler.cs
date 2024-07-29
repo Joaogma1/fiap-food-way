@@ -2,10 +2,11 @@ using Foodway.Shared.Notifications;
 
 namespace Foodway.Application.UseCases;
 
-public class BaseCommandHandler
+public abstract class BaseHandler
 {
     protected IDomainNotification Notifications;
-    public BaseCommandHandler(IDomainNotification notifications)
+
+    public BaseHandler(IDomainNotification notifications)
     {
         Notifications = notifications;
     }
