@@ -2,7 +2,12 @@ using Foodway.Application.Contracts.Services;
 using Foodway.Domain.QueryFilters;
 using Foodway.Domain.Requests.Order;
 using Foodway.Application.UseCases.Order.Commands.CreateOrderCommand;
+using Foodway.Application.UseCases.Order.Commands.UpdateOrderStatusCommand;
+using Foodway.Application.UseCases.Order.Queries.GetOrderByIdQuery;
+using Foodway.Application.UseCases.Order.Queries.ListAllOrdersFilteredPaginatedQuery;
+using Foodway.Application.UseCases.Order.Queries.ListAllOrdersPaginatedQuery;
 using Foodway.Shared.Notifications;
+using Foodway.Shared.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,33 +20,28 @@ namespace Foodway.Api.Controllers.V1;
 [AllowAnonymous]
 public class OrdersController : BaseApiController
 {
-    private readonly IOrderService _orderService;
-
-    public OrdersController(IDomainNotification domainNotification,IMediator mediator, IOrderService orderService) : base(
+    public OrdersController(IDomainNotification domainNotification, IMediator mediator) : base(
         domainNotification, mediator)
     {
-        _orderService = orderService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] OrdersFilter filter)
     {
-        return CreateResponse(await _orderService.GetPagedAsync(filter));
+        return CreateResponse(await Mediator.Send(new ListAllOrdersPaginatedQuery(filter)));
     }
 
     [HttpGet("all-filtered")]
-    public async Task<IActionResult> GetAllFiltered(int pageIndex = 1, int pageSize = 10, int? lastOrderId = null)
+    public async Task<IActionResult> GetAllFiltered([FromQuery] Pagination pagination,
+        [FromQuery] int? lastOrderId = null)
     {
-        var orders = await _orderService.GetAllFilteredOrdersAsync(pageIndex, pageSize, lastOrderId);
-        return CreateResponse(orders);
+        return CreateResponse(await Mediator.Send(new ListAllOrdersFilteredPaginatedQuery(pagination, lastOrderId)));
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
-        var result = await _orderService.GetByIdAsync(id);
-
-        return CreateResponse(result);
+        return CreateResponse(await Mediator.Send(new GetOrderByIdQuery(id)));
     }
 
     [HttpPost]
@@ -51,11 +51,9 @@ public class OrdersController : BaseApiController
     }
 
     [HttpPatch("status/{orderId}")]
-    public async Task<IActionResult> Put(Guid orderId, [FromBody] UpdateOrderStatusRequest req)
+    public async Task<IActionResult> Put(Guid orderId, [FromBody] UpdateOrderStatusCommand req)
     {
         req.OrderId = orderId;
-        var result = await _orderService.UpdateOrderStatusAsync(req);
-        if (result) return NoContentResponse();
-        return NotFound();
+        return await Mediator.Send(req) ? NoContentResponse() : NotFound();
     }
 }

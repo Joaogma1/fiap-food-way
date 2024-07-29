@@ -10,10 +10,11 @@ public static class MediatorConfig
 {
     public static IServiceCollection AddMediator(this IServiceCollection services)
     {
-        var useCaseAssembly = typeof(SignInCommandHandler).Assembly.GetTypes()
-            .Where(type => type is {IsClass: true, IsAbstract: false}
+        var useCaseAssembly = typeof(SignInHandler).Assembly.GetTypes()
+            .Where(type => type is { IsClass: true, IsAbstract: false }
                            && type.Name.EndsWith("Handler")
-                           && type.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
+                           && type.GetInterfaces().Any(i =>
+                               i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>)))
             .Select(x => x.GetTypeInfo().Assembly).First();
 
         services.AddMediatR(cfg =>

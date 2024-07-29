@@ -29,6 +29,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
         predicate = filter.OrderStatus is null
             ? predicate.And(x => x.OrderStatus == OrderStatus.ReadyForPickUp)
             : predicate.And(x => x.OrderStatus == filter.OrderStatus);
+
         predicate = filter.ClientId is null || filter.ClientId == Guid.Empty
             ? predicate
             : predicate.And(x => x.ClientId == filter.ClientId);

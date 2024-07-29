@@ -12,7 +12,8 @@ public class CategoryService : BaseService, ICategoryService
 {
     private readonly ICategoryRepository _categoryRepository;
 
-    public CategoryService(IDomainNotification notifications, ICategoryRepository categoryRepository) : base(notifications)
+    public CategoryService(IDomainNotification notifications, ICategoryRepository categoryRepository) : base(
+        notifications)
     {
         _categoryRepository = categoryRepository;
     }

@@ -10,7 +10,7 @@ public class SignInCommandValidator : BaseValidator<SignInCommand>
         RuleFor(p => p.Email)
             .NotEmpty()
             .EmailAddress();
-        
+
         RuleFor(p => p.Password)
             .NotEmpty();
     }

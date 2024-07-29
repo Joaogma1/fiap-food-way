@@ -9,7 +9,7 @@ public interface IProductService
 {
     Task<string> CreateAsync(CreateProductRequest req);
 
-    Task<string> UpdateAsync(UpdateProductRequest req);
+    Task<string> UpsertAsync(UpdateProductRequest req);
 
     Task<PagedList<ProductViewModel>> getPagedAsync(ProductFilter filter);
     Task<bool> DeleteAsync(Guid id);

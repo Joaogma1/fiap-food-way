@@ -4,7 +4,6 @@ using Foodway.Application.UseCases.Category.Commands.CreateCategoryCommand;
 using Foodway.Application.UseCases.Client.Commands.CreateClientCommand;
 using Foodway.Application.UseCases.Order.Commands.CreateOrderCommand;
 using Foodway.Application.UseCases.Product.Commands.CreateProductCommand;
-using Foodway.Application.Validations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Foodway.Config.Bootstrap;
@@ -21,12 +20,8 @@ public static class ValidationConfig
     /// <returns>Returns the modified IServiceCollection with added validation services.</returns>
     public static IServiceCollection AddValidations(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssemblyContaining<CreateCategoryCommandValidator>();
         services.AddValidatorsFromAssemblyContaining<SignInCommandValidator>();
-        services.AddValidatorsFromAssemblyContaining<CreateClientCommandValidator>();
-        services.AddValidatorsFromAssemblyContaining<CreateProductCommandValidator>();
-        services.AddValidatorsFromAssemblyContaining<CreateOrderCommandValidator>();
-        
+
         return services;
     }
 }

@@ -2,7 +2,7 @@ using FluentValidation;
 using Foodway.Domain.Requests.Order;
 using Foodway.Shared.Validations;
 
-namespace Foodway.Application.Validations;
+namespace Foodway.Application.UseCases.Order.Commands.CreateOrderCommand;
 
 public class OrderItemValidator : BaseValidator<OrderItem>
 {

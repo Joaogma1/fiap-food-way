@@ -27,7 +27,6 @@ public class ProductService : BaseService, IProductService
 
     public async Task<string> CreateAsync(CreateProductRequest req)
     {
-
         if (!await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId))
         {
             Notifications.Handle("Category", $"{req.CategoryId} does not exists");
@@ -57,12 +56,6 @@ public class ProductService : BaseService, IProductService
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        if (!await _productRepository.AnyAsync(x => x.Id == id))
-        {
-            Notifications.Handle("Product", $"{id} does not exists");
-            return false;
-        }
-
         var product = await _productRepository.FindAsync(x => x.Id == id);
 
         product!.IsDeleted = true;
@@ -89,18 +82,12 @@ public class ProductService : BaseService, IProductService
         return new PagedList<ProductViewModel>(data.Items.ToViewModel(), data.TotalPages, data.PageSize);
     }
 
-    public async Task<string> UpdateAsync(UpdateProductRequest req)
+    public async Task<string> UpsertAsync(UpdateProductRequest req)
     {
-        if (!await _categoryRepository.AnyAsync(x => x.Id == req.CategoryId))
-        {
-            Notifications.Handle("Category", $"{req.CategoryId} does not exists");
-            return "";
-        }
+        var productExists = await _productRepository
+            .AnyAsync(x => x.Id == req.Id);
 
-        var joins = new IncludeHelper<Product>().Include(x => x.Category).Include(x => x.Stock).Includes;
-
-        var product = await _productRepository.FindAsync(x => x.Id == req.Id, joins);
-        if (product == null)
+        if (!productExists)
         {
             var createdProduct = await _productRepository.AddAsync(new Product
             {
@@ -113,7 +100,7 @@ public class ProductService : BaseService, IProductService
                 Stock = new ProductStock
                 {
                     QuantityInStock = req.Stock,
-                    Product = default,
+                    Product = default!,
                     ProductId = default
                 }
             });
@@ -121,9 +108,12 @@ public class ProductService : BaseService, IProductService
             return createdProduct.Id.ToString();
         }
 
-        UpdateProduct(ref product, req);
+        var joins = new IncludeHelper<Product>().Include(x => x.Category).Include(x => x.Stock).Includes;
+        var product = await _productRepository.FindAsync(x => x.Id == req.Id, joins);
+
+        UpdateProduct(ref product!, req);
         await _productRepository.SaveChanges();
-        return product.Id.ToString();
+        return string.Empty;
     }
 
     private void UpdateProduct(ref Product product, UpdateProductRequest req)

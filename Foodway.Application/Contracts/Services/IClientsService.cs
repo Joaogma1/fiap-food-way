@@ -7,5 +7,5 @@ public interface IClientsService
 {
     Task<string> CreateAsync(CreateClientRequest req);
 
-    Task<ClientsViewModel?> GetByCPFAsync(string id);
+    Task<ClientsViewModel?> GetByCpfAsync(string cpf);
 }
