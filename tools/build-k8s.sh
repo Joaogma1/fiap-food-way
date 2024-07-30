@@ -3,7 +3,7 @@
 echo "Creating all k8s resources for the project..."
 
 kubectl apply -f ./k8s/configmaps/db-config.yml
-kubectl apply -f ./k8s/volumes/db-pvc.yml
+kubectl apply -f ./k8s/volumes/db-volume.yml
 kubectl apply -f ./k8s/database-deployment.yml
 kubectl apply -f ./k8s/services/postgres-service.yml
 kubectl apply -f ./k8s/fiapfoodway-api-deployment.yml
