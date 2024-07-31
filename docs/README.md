@@ -2,6 +2,9 @@
 
 ## Requisitos de Sistema
 
+## Link Entregável Segundo Ciclo:
+https://youtu.be/KfNqUKsRC78
+
 Certifique-se de que você tenha as seguintes ferramentas instaladas no seu sistema:
 
 - .NET Core SDK net 8.0 ou superior
